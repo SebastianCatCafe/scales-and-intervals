@@ -1,0 +1,1469 @@
+<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#14151b"><script>(function(){var t;try{t=localStorage.getItem("theme")}catch(e){}if(t!=="light"&&t!=="dark")t=(window.matchMedia&&matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark";document.documentElement.setAttribute("data-theme",t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",t==="light"?"#f3e3d1":"#14151b")})()</script><title>Ściąga z interwałów i skal</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap"><style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style>
+
+:root{
+  --bg:#14151b; --panel:#1c1e26; --line:#2c2f3a; --fg:#ecebf2; --muted:#9c9eae; --bed:#3a3d4d;
+  --kw:#e4e3ea; --kb:#272932; --ink:#14151b; --onblack:#ffffff; --hit:#ffe45c;
+  --c-maj:#ff8f45; --c-nat:#57a8ff; --c-har:#b493ff; --c-mel:#ff7fb5; --c-dor:#2ecfc4; --c-blu:#56d67f;
+  --c-per:#57a8ff; --c-con:#56d67f; --c-dis:#ff7d6e;
+  --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+  --body:"Onest","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono","Cascadia Mono",Consolas,ui-monospace,monospace;
+  color-scheme:dark;
+}
+/* Light mode: warm, skin-tone palette (sand / peach / cocoa) instead of white */
+:root[data-theme="light"]{
+  --bg:#f3e3d1; --panel:#fbf0e4; --line:#dcc1a6; --fg:#3a291f; --muted:#7a5f4f; --bed:#c8a98c;
+  --kw:#fff3e3; --kb:#2b1e17; --hit:#f2b705;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:1080px;margin-inline:auto;padding-inline:clamp(16px,4vw,32px);padding-block:28px 56px}
+
+#tab-iv .wrap{max-width:1080px;margin-inline:auto;padding-inline:clamp(16px,4vw,32px);padding-block:28px 56px}
+#tab-iv header h1{font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,4.2vw,2.4rem);line-height:1.1;margin:0 0 10px;text-wrap:balance}
+#tab-iv header p{margin:0;color:var(--muted);max-width:64ch}
+#tab-iv .legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin:16px 0 0;padding:0;list-style:none;font-size:.9rem}
+#tab-iv .legend li{display:flex;align-items:center;gap:8px}
+#tab-iv .legend li::before{content:"";width:.75em;height:.75em;border-radius:3px;background:var(--hue);flex:none}
+#tab-iv .roots{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin-top:22px;padding-block:10px;display:flex;align-items:center;gap:12px}
+#tab-iv .roots span{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);flex:none}
+#tab-iv .roots div{display:flex;gap:6px;overflow-x:auto;min-width:0;padding-block:3px;padding-inline:3px}
+#tab-iv .roots button{flex:none;font:700 .9rem var(--mono);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer}
+#tab-iv .roots button:hover{border-color:var(--muted)}
+#tab-iv .roots button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+#tab-iv button:focus-visible{outline:2px solid var(--hit);outline-offset:2px}
+#tab-iv .iv{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.85fr) minmax(0,1.2fr);gap:16px 28px;align-items:center;padding-block:20px;border-bottom:1px solid var(--line)}
+#tab-iv .info{min-width:0;display:grid;gap:12px;justify-items:start}
+#tab-iv .head{display:flex;align-items:center;gap:14px}
+#tab-iv .sym{font:700 1.25rem var(--mono);background:var(--hue);color:var(--ink);border-radius:8px;min-width:2.6em;padding:6px 8px;text-align:center;flex:none}
+#tab-iv .head h3{margin:0;font-size:1.2rem;font-weight:600;line-height:1.25}
+#tab-iv .meta{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+#tab-iv .meta b{color:var(--fg);font-weight:600}
+#tab-iv .sub{margin:0;color:var(--muted);font-size:.88rem;max-width:36ch}
+#tab-iv .notes{margin:0;font-family:var(--mono);font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#tab-iv .notes b{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:2px 8px}
+#tab-iv .notes span{color:var(--muted)}
+#tab-iv .btns{display:flex;flex-wrap:wrap;gap:6px}
+#tab-iv .btns button{display:inline-flex;align-items:center;gap:7px;font:500 .85rem var(--body);color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 10px;cursor:pointer}
+#tab-iv .btns button:hover{border-color:var(--hue)}
+#tab-iv .btns svg{width:9px;height:11px;fill:var(--hue)}
+#tab-iv .songs{margin:0;padding:0;list-style:none;min-width:0;display:grid;gap:3px}
+#tab-iv .songs li{padding-left:14px;position:relative}
+#tab-iv .songs li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--hue)}
+#tab-iv .songs li.none{padding-left:0;color:var(--muted)}
+#tab-iv .songs li.none::before{display:none}
+#tab-iv .kb{min-width:0}
+#tab-iv .kb svg{display:block;width:100%;height:auto}
+#tab-iv .kb rect.bed{fill:var(--bed)}
+#tab-iv .k{cursor:pointer}
+#tab-iv .k.w{fill:var(--kw)}
+#tab-iv .k.b{fill:var(--kb)}
+#tab-iv .k.w.on{fill:var(--hue)}
+#tab-iv .k.b.on{fill:color-mix(in srgb,var(--hue) 60%,#000)}
+#tab-iv .k.w.hit,#tab-iv .k.b.hit{fill:var(--hit)}
+#tab-iv .kb text{font-family:var(--mono);font-weight:700;text-anchor:middle;pointer-events:none}
+#tab-iv .kb .lw{fill:var(--ink);font-size:17px}
+#tab-iv .kb .lb{fill:var(--onblack);font-size:12px}
+#tab-iv .kb .dw{fill:var(--ink);pointer-events:none}
+#tab-iv .kb .db{fill:var(--onblack);pointer-events:none}
+#tab-iv section{margin-top:44px}
+#tab-iv section h2{font-family:var(--display);font-weight:500;font-size:1.05rem;letter-spacing:.02em;margin:0 0 6px}
+#tab-iv section > p{color:var(--muted);margin:0 0 14px;max-width:68ch}
+#tab-iv .pairs{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none;font-family:var(--mono);font-weight:700}
+#tab-iv .pairs li{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+#tab-iv .pairs span{color:var(--muted);font-weight:500}
+#tab-iv .pairs b{background:var(--hue);color:var(--ink);border-radius:6px;padding:1px 7px}
+#tab-iv .quizbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-bottom:14px}
+#tab-iv #quiz-play{font:600 .95rem var(--body);background:var(--fg);color:var(--bg);border:0;border-radius:999px;padding:9px 18px;cursor:pointer}
+#tab-iv #quiz-msg{margin:0;min-width:0}
+#tab-iv #quiz-score{margin:0 0 0 auto;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--muted)}
+#tab-iv .answers{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:8px}
+#tab-iv .answers button{display:flex;align-items:center;gap:10px;text-align:left;font:500 .92rem var(--body);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer;min-width:0}
+#tab-iv .answers button:hover{border-color:var(--muted)}
+#tab-iv .answers button i{font:700 .9rem var(--mono);font-style:normal;min-width:1.7em;color:var(--muted)}
+#tab-iv .answers button.ok{background:var(--c-con);border-color:var(--c-con);color:var(--ink)}
+#tab-iv .answers button.bad{background:var(--c-dis);border-color:var(--c-dis);color:var(--ink)}
+#tab-iv .answers button.ok i,#tab-iv .answers button.bad i{color:var(--ink)}
+#tab-iv footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.88rem;max-width:70ch}
+@media (max-width:860px){#tab-iv .iv{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+#tab-iv .iv .kb{grid-column:1 / -1}}
+@media (max-width:560px){#tab-iv .iv{grid-template-columns:minmax(0,1fr)}
+#tab-iv .roots span{display:none}
+#tab-iv #quiz-score{margin-left:0}}
+@media (prefers-reduced-motion:no-preference){#tab-iv .k{transition:fill .08s}}
+#tab-sc .wrap{max-width:1080px;margin-inline:auto;padding-inline:clamp(16px,4vw,32px);padding-block:28px 56px}
+#tab-sc header h1{font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,4.2vw,2.4rem);line-height:1.1;margin:0 0 10px;text-wrap:balance}
+#tab-sc header p{margin:0;color:var(--muted);max-width:62ch}
+#tab-sc header p b{color:var(--fg);font-family:var(--mono);font-weight:700}
+#tab-sc .roots{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin-top:22px;padding-block:10px;display:flex;align-items:center;gap:12px}
+#tab-sc .roots span{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);flex:none}
+#tab-sc .roots div{display:flex;gap:6px;overflow-x:auto;min-width:0;padding-block:3px;padding-inline:3px}
+#tab-sc .roots button{flex:none;font:700 .9rem var(--mono);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer}
+#tab-sc .roots button:hover{border-color:var(--muted)}
+#tab-sc .roots button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+#tab-sc button:focus-visible,#tab-sc .k:focus-visible{outline:2px solid var(--hit);outline-offset:2px}
+#tab-sc section{margin-top:40px}
+#tab-sc section h2{font-family:var(--display);font-weight:500;font-size:1.05rem;letter-spacing:.02em;margin:0 0 4px}
+#tab-sc .intro{color:var(--muted);margin:0 0 6px;max-width:68ch}
+#tab-sc .intro b{color:var(--fg);font-family:var(--mono)}
+#tab-sc .scale{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:20px 32px;align-items:center;padding-block:22px;border-top:1px solid var(--line)}
+#tab-sc .scale h3{margin:0;font-size:1.25rem;font-weight:600;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px}
+#tab-sc .scale h3::before{content:"";width:.7em;height:.7em;border-radius:3px;background:var(--hue);align-self:center;flex:none}
+#tab-sc .scale h3 small{font-size:.8rem;font-weight:400;color:var(--muted)}
+#tab-sc .scale p{margin:8px 0 14px;color:var(--muted);max-width:52ch}
+#tab-sc .info{min-width:0;display:grid;justify-items:start}
+#tab-sc .formula{display:flex;flex-wrap:wrap;align-items:flex-start;row-gap:8px;font-family:var(--mono)}
+#tab-sc .n{display:grid;justify-items:center;gap:3px}
+#tab-sc .n b{background:var(--hue);color:var(--ink);padding:3px 6px;border-radius:6px;min-width:2.2em;text-align:center;font-weight:700}
+#tab-sc .n.r b{outline:2px solid var(--fg);outline-offset:1px}
+#tab-sc .n i{font-style:normal;font-size:.72rem;color:var(--muted)}
+#tab-sc .st{padding:3px 5px;font-size:.8rem;line-height:1.75;color:var(--muted)}
+#tab-sc .st.h{color:var(--fg);font-weight:700}
+#tab-sc .play{margin-top:14px;display:inline-flex;align-items:center;gap:8px;font:500 .88rem var(--body);color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 14px 6px 11px;cursor:pointer}
+#tab-sc .play:hover{border-color:var(--hue)}
+#tab-sc .play svg{width:10px;height:12px;fill:var(--hue)}
+#tab-sc .kb{min-width:0}
+#tab-sc .kb svg{display:block;width:100%;height:auto}
+#tab-sc .kb rect.bed{fill:var(--bed)}
+#tab-sc .k{cursor:pointer}
+#tab-sc .k.w{fill:var(--kw)}
+#tab-sc .k.b{fill:var(--kb)}
+#tab-sc .k.w.on{fill:var(--hue)}
+#tab-sc .k.b.on{fill:color-mix(in srgb,var(--hue) 60%,#000)}
+#tab-sc .k.w.hit,#tab-sc .k.b.hit{fill:var(--hit)}
+#tab-sc .kb text{font-family:var(--mono);font-weight:700;text-anchor:middle;pointer-events:none}
+#tab-sc .kb .lw{fill:var(--ink);font-size:17px}
+#tab-sc .kb .lb{fill:var(--onblack);font-size:12px}
+#tab-sc .kb .dw{fill:var(--ink);pointer-events:none}
+#tab-sc .kb .db{fill:var(--onblack);pointer-events:none}
+#tab-sc .tblwrap{overflow-x:auto;margin-block:14px 6px}
+#tab-sc .cmp{border-collapse:separate;border-spacing:6px;font-size:.92rem}
+#tab-sc .cmp th{font-weight:500;color:var(--muted);text-align:left;padding:6px 10px;white-space:nowrap}
+#tab-sc .cmp th b{display:block;font-family:var(--mono);color:var(--fg)}
+#tab-sc .cmp td{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-weight:600;white-space:nowrap}
+#tab-sc .cmp td::before{content:"";display:inline-block;width:.7em;height:.7em;border-radius:3px;background:var(--hue);margin-right:9px}
+#tab-sc footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.88rem;max-width:70ch}
+@media (max-width:760px){#tab-sc .scale{grid-template-columns:minmax(0,1fr)}
+#tab-sc .roots span{display:none}}
+@media (prefers-reduced-motion:no-preference){#tab-sc .k{transition:fill .08s}}
+:root{--tabh:56px}
+.tabbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;height:var(--tabh);background:var(--bg);border-bottom:1px solid var(--line)}
+.tabbar-in{max-width:1080px;height:100%;margin-inline:auto;padding-inline:clamp(16px,4vw,32px);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tabs{display:flex;gap:6px;height:100%}
+.tabs button{font:600 .95rem var(--body);color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:0 9px;cursor:pointer}
+.tabs button:hover{color:var(--fg)}
+.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:none}
+.tools{display:flex;align-items:center;gap:8px;flex:none}
+.coffee{font:600 .8rem var(--body);color:#1a1a1a;background:#ffdd00;border-radius:999px;padding:7px 13px;text-decoration:none;white-space:nowrap}
+.inst{display:inline-flex;align-items:center;gap:10px;margin-top:6px;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.inst .langsel{font-size:.85rem;letter-spacing:0;text-transform:none;padding:6px 28px 6px 13px;background-position:right 11px center}
+.coffee:hover{filter:brightness(.93)}
+.langsel{font:600 .8rem var(--body);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 28px 6px 13px;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23888' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;background-size:10px 6px}
+@media (max-width:560px){.tabs button{font-size:.85rem;padding:0 6px}.coffee{padding:6px 9px;font-size:.72rem}.langsel{font-size:.72rem;padding:5px 24px 5px 10px;background-position:right 9px center}.tabbar-in{gap:6px}}
+.lang button{font:700 .75rem var(--mono);color:var(--muted);background:none;border:0;padding:6px 9px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.tabbar button:focus-visible{outline:2px solid var(--hit);outline-offset:-2px}
+#tab-iv .roots,#tab-sc .roots{top:calc(var(--tabh) + env(safe-area-inset-top,0px))}
+
+/* theme switch */
+.themebtn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer;flex:none}
+.themebtn:hover{border-color:var(--muted)}
+.themebtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:block}
+.themebtn .i-moon{display:none}
+:root[data-theme="light"] .themebtn .i-sun{display:none}
+:root[data-theme="light"] .themebtn .i-moon{display:block}
+.cf-s{display:none}
+.tabs{min-width:0;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{white-space:nowrap}
+@media (max-width:600px){.tools{gap:6px}}
+@media (max-width:460px){.cf-l{display:none}.cf-s{display:inline}.coffee{padding:6px 8px}.tabs button{font-size:.8rem;padding:0 5px}.langsel{font-size:.7rem;padding:5px 20px 5px 8px;background-position:right 7px center}.tabs{gap:2px}}
+/* instrument + MIDI row */
+.toolrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin-top:6px}
+.toolrow .inst{margin-top:0}
+.midibox{display:inline-flex;align-items:center;flex-wrap:wrap;gap:6px 10px;min-width:0}
+.toolrow .langsel{height:34px}
+.midibtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:none;height:34px;box-sizing:border-box;font:600 .8rem/1 var(--body);white-space:nowrap;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:0 14px 0 12px;cursor:pointer}
+.midibtn:hover{border-color:var(--muted)}
+.midibtn:focus-visible{outline:2px solid var(--hit);outline-offset:2px}
+.midibtn .dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.midibtn[aria-pressed="true"]{border-color:var(--c-con)}
+.midibtn[aria-pressed="true"] .dot{background:var(--c-con);box-shadow:0 0 0 3px color-mix(in srgb,var(--c-con) 30%,transparent)}
+.midistat{font-size:.8rem;color:var(--muted);min-width:0;max-width:60ch}
+.midistat:empty{display:none}
+
+/* ===== CHORDS TAB CSS (part of the removable chords block) ===== */
+#tab-ch .wrap{max-width:1080px;margin-inline:auto;padding-inline:clamp(16px,4vw,32px);padding-block:28px 56px}
+#tab-ch header h1{font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,4.2vw,2.4rem);line-height:1.1;margin:0 0 10px;text-wrap:balance}
+#tab-ch header p{margin:0;color:var(--muted);max-width:62ch}
+#tab-ch header p b{color:var(--fg);font-family:var(--mono);font-weight:700}
+#tab-ch .roots{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin-top:22px;padding-block:10px;display:flex;align-items:center;gap:12px}
+#tab-ch .roots span{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);flex:none}
+#tab-ch .roots div{display:flex;gap:6px;overflow-x:auto;min-width:0;padding-block:3px;padding-inline:3px}
+#tab-ch .roots button{flex:none;font:700 .9rem var(--mono);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer}
+#tab-ch .roots button:hover{border-color:var(--muted)}
+#tab-ch .roots button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+#tab-ch button:focus-visible,#tab-ch .k:focus-visible{outline:2px solid var(--hit);outline-offset:2px}
+#tab-ch section{margin-top:40px}
+#tab-ch section h2{font-family:var(--display);font-weight:500;font-size:1.05rem;letter-spacing:.02em;margin:0 0 4px}
+#tab-ch .intro{color:var(--muted);margin:0 0 6px;max-width:68ch}
+#tab-ch .intro b{color:var(--fg);font-family:var(--mono)}
+#tab-ch .scale{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:20px 32px;align-items:center;padding-block:22px;border-top:1px solid var(--line)}
+#tab-ch .scale h3{margin:0;font-size:1.25rem;font-weight:600;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px}
+#tab-ch .scale h3::before{content:"";width:.7em;height:.7em;border-radius:3px;background:var(--hue);align-self:center;flex:none}
+#tab-ch .scale h3 small{font-size:.8rem;font-weight:400;color:var(--muted)}
+#tab-ch .scale p{margin:8px 0 14px;color:var(--muted);max-width:52ch}
+#tab-ch .info{min-width:0;display:grid;justify-items:start}
+#tab-ch .formula{display:flex;flex-wrap:wrap;align-items:flex-start;row-gap:8px;font-family:var(--mono)}
+#tab-ch .n{display:grid;justify-items:center;gap:3px}
+#tab-ch .n b{background:var(--hue);color:var(--ink);padding:3px 6px;border-radius:6px;min-width:2.2em;text-align:center;font-weight:700}
+#tab-ch .n.r b{outline:2px solid var(--fg);outline-offset:1px}
+#tab-ch .n i{font-style:normal;font-size:.72rem;color:var(--muted)}
+#tab-ch .st{padding:3px 5px;font-size:.8rem;line-height:1.75;color:var(--muted)}
+#tab-ch .st.h{color:var(--fg);font-weight:700}
+#tab-ch .play{margin-top:14px;display:inline-flex;align-items:center;gap:8px;font:500 .88rem var(--body);color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 14px 6px 11px;cursor:pointer}
+#tab-ch .play:hover{border-color:var(--hue)}
+#tab-ch .play svg{width:10px;height:12px;fill:var(--hue)}
+#tab-ch .kb{min-width:0}
+#tab-ch .kb svg{display:block;width:100%;height:auto}
+#tab-ch .kb rect.bed{fill:var(--bed)}
+#tab-ch .k{cursor:pointer}
+#tab-ch .k.w{fill:var(--kw)}
+#tab-ch .k.b{fill:var(--kb)}
+#tab-ch .k.w.on{fill:var(--hue)}
+#tab-ch .k.b.on{fill:color-mix(in srgb,var(--hue) 60%,#000)}
+#tab-ch .k.w.hit,#tab-ch .k.b.hit{fill:var(--hit)}
+#tab-ch .kb text{font-family:var(--mono);font-weight:700;text-anchor:middle;pointer-events:none}
+#tab-ch .kb .lw{fill:var(--ink);font-size:17px}
+#tab-ch .kb .lb{fill:var(--onblack);font-size:12px}
+#tab-ch .kb .dw{fill:var(--ink);pointer-events:none}
+#tab-ch .kb .db{fill:var(--onblack);pointer-events:none}
+#tab-ch .tblwrap{overflow-x:auto;margin-block:14px 6px}
+#tab-ch .cmp{border-collapse:separate;border-spacing:6px;font-size:.92rem}
+#tab-ch .cmp th{font-weight:500;color:var(--muted);text-align:left;padding:6px 10px;white-space:nowrap}
+#tab-ch .cmp th b{display:block;font-family:var(--mono);color:var(--fg)}
+#tab-ch .cmp td{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-weight:600;white-space:nowrap}
+#tab-ch .cmp td::before{content:"";display:inline-block;width:.7em;height:.7em;border-radius:3px;background:var(--hue);margin-right:9px}
+#tab-ch footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.88rem;max-width:70ch}
+@media (max-width:760px){#tab-ch .scale{grid-template-columns:minmax(0,1fr)}
+#tab-ch .roots span{display:none}}
+@media (prefers-reduced-motion:no-preference){#tab-ch .k{transition:fill .08s}}
+#tab-ch .roots{top:calc(var(--tabh) + env(safe-area-inset-top,0px))}
+#tab-ch .pbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+#tab-ch .pbtns .play{margin-top:0}
+/* ===== /CHORDS TAB CSS ===== */
+
+/* ===== EAR TEST FILTER CSS (removable) ===== */
+#tab-iv .earfilter{margin:0 0 18px}
+#tab-iv .ef-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin-bottom:10px}
+#tab-iv .ef-head b{font-weight:600;font-size:.92rem}
+#tab-iv .ef-hint{color:var(--muted);font-size:.82rem}
+#tab-iv .ef-all{font:600 .78rem var(--body);color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:999px;padding:4px 11px;cursor:pointer}
+#tab-iv .ef-all:hover{border-color:var(--muted)}
+#tab-iv .ef-chips{display:flex;flex-wrap:wrap;gap:6px}
+#tab-iv .ef-chip{display:inline-flex;align-items:center;gap:8px;font:500 .85rem var(--body);color:var(--fg);background:var(--panel);border:1px solid var(--hue);border-radius:999px;padding:5px 12px 5px 10px;cursor:pointer}
+#tab-iv .ef-chip::before{content:"";width:.6em;height:.6em;border-radius:50%;background:var(--hue);flex:none}
+#tab-iv .ef-chip i{font:700 .82rem var(--mono);font-style:normal}
+#tab-iv .ef-chip[aria-pressed="false"]{opacity:.5;border-color:var(--line);text-decoration:line-through}
+#tab-iv .ef-chip[aria-pressed="false"]::before{background:var(--muted)}
+#tab-iv .ef-chip[aria-disabled="true"]{cursor:default}
+/* ===== /EAR TEST FILTER CSS ===== */
+
+
+/* long keyboards (3-4 octaves) get a full-width row so the keys stay readable */
+body[data-oct="3"] #tab-iv .iv,body[data-oct="4"] #tab-iv .iv{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+body[data-oct="3"] #tab-iv .iv .kb,body[data-oct="4"] #tab-iv .iv .kb{grid-column:1/-1}
+body[data-oct="3"] #tab-sc .scale,body[data-oct="4"] #tab-sc .scale,body[data-oct="3"] #tab-ch .scale,body[data-oct="4"] #tab-ch .scale{grid-template-columns:minmax(0,1fr)}
+/* ===== SUPPORTERS (removable) ===== */
+.thanks{max-width:1080px;margin-inline:auto;padding:0 clamp(16px,4vw,32px) 40px}
+.thanks-in{border-top:1px solid var(--line);padding-top:16px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;color:var(--muted);font-size:.88rem}
+.thanks-in[hidden]{display:none}
+.thanks-l{display:inline-flex;align-items:center;gap:7px}
+.thanks-l svg{width:13px;height:13px;fill:var(--c-mel);flex:none}
+.thanks-n{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.thanks-n li{font-weight:600;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:2px 11px;font-size:.84rem}
+/* ===== /SUPPORTERS ===== */
+</style></head><body>
+<div class="tabbar"><div class="tabbar-in">
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" id="tabbtn-iv" data-tab="iv" data-i="tab.iv"></button>
+    <button type="button" role="tab" id="tabbtn-sc" data-tab="sc" data-i="tab.sc"></button>
+    <button type="button" role="tab" id="tabbtn-ch" data-tab="ch" data-i="tab.ch"></button><!-- CHORDS TAB button -->
+  </div>
+  <div class="tools">
+    <a class="coffee" href="https://buymeacoffee.com/catcafe" target="_blank" rel="noopener" aria-label="Buy me a coffee!"><span class="cf-l">Buy me a coffee!</span><span class="cf-s" aria-hidden="true">&#9749;</span></a>
+    <select class="langsel" id="langsel" aria-label="Language">
+      <option value="en">English</option><option value="de">Deutsch</option><option value="es">Español</option><option value="fr">Français</option><option value="nl">Nederlands</option><option value="no">Norsk</option><option value="pl">Polski</option>
+    </select>
+    <button type="button" class="themebtn" id="themebtn"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.3M12 19.2v2.3M2.5 12h2.3M19.2 12h2.3M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.8 6.8 0 0 0 10.7 10.7z"/></svg></button>
+  </div>
+</div></div>
+
+<div id="tab-iv" role="tabpanel"><div class="wrap">
+  <header>
+    <h1 data-i="iv.h1"></h1>
+    <p data-i="iv.intro"></p>
+    <div class="toolrow"><label class="inst"><span data-i="inst.label"></span><select class="langsel instsel"><option value="piano" data-i="inst.piano"></option><option value="epiano" data-i="inst.epiano"></option><option value="organ" data-i="inst.organ"></option><option value="guitar" data-i="inst.guitar"></option><option value="flute" data-i="inst.flute"></option><option value="sine" data-i="inst.sine"></option></select></label><label class="inst"><span data-i="oct.label"></span><select class="langsel octsel" aria-label="Octaves"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label><div class="midibox"><button type="button" class="midibtn" aria-pressed="false"><span class="dot" aria-hidden="true"></span><span data-i="midi.conn"></span></button><span class="midistat" aria-live="polite"></span></div></div>
+    <ul class="legend">
+      <li style="--hue:var(--c-per)" data-i="iv.l1"></li>
+      <li style="--hue:var(--c-con)" data-i="iv.l2"></li>
+      <li style="--hue:var(--c-dis)" data-i="iv.l3"></li>
+    </ul>
+  </header>
+  <nav class="roots" data-aria="iv.rootsAria"><span data-i="iv.from"></span><div id="roots"></div></nav>
+  <main id="app"></main>
+  <section><h2 data-i="iv.invH"></h2><p data-i="iv.invP"></p><ul class="pairs" id="pairs"></ul></section>
+  <section><h2 data-i="iv.earH"></h2><p data-i="iv.earP"></p>
+    <!-- EAR TEST FILTER (removable) --><div class="earfilter" id="earfilter"></div><!-- /EAR TEST FILTER -->
+    <div class="quizbar"><button type="button" id="quiz-play"></button><p id="quiz-msg" aria-live="polite"></p><p id="quiz-score">0 / 0</p></div>
+    <div class="answers" id="answers"></div>
+  </section>
+  <footer><span data-i="nsys"></span> <span data-i="iv.foot"></span></footer>
+</div></div>
+
+<div id="tab-sc" role="tabpanel" hidden><div class="wrap">
+  <header><h1 data-i="sc.h1"></h1><p data-i="sc.intro"></p><div class="toolrow"><label class="inst"><span data-i="inst.label"></span><select class="langsel instsel"><option value="piano" data-i="inst.piano"></option><option value="epiano" data-i="inst.epiano"></option><option value="organ" data-i="inst.organ"></option><option value="guitar" data-i="inst.guitar"></option><option value="flute" data-i="inst.flute"></option><option value="sine" data-i="inst.sine"></option></select></label><label class="inst"><span data-i="oct.label"></span><select class="langsel octsel" aria-label="Octaves"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label><div class="midibox"><button type="button" class="midibtn" aria-pressed="false"><span class="dot" aria-hidden="true"></span><span data-i="midi.conn"></span></button><span class="midistat" aria-live="polite"></span></div></div></header>
+  <nav class="roots" data-aria="sc.rootsAria"><span data-i="sc.key"></span><div id="sroots"></div></nav>
+  <main id="sapp"></main>
+  <footer data-i="nsys"></footer>
+</div></div>
+
+<!-- ===== CHORDS TAB (self-contained). To remove it: delete this block, the #tabbtn-ch button, the "CHORDS TAB CSS" block
+     and the "CHORDS TAB" script block. Nothing else depends on it. ===== -->
+<div id="tab-ch" role="tabpanel" hidden><div class="wrap">
+  <header><h1 data-i="ch.h1"></h1><p data-i="ch.intro"></p><div class="toolrow"><label class="inst"><span data-i="inst.label"></span><select class="langsel instsel"><option value="piano" data-i="inst.piano"></option><option value="epiano" data-i="inst.epiano"></option><option value="organ" data-i="inst.organ"></option><option value="guitar" data-i="inst.guitar"></option><option value="flute" data-i="inst.flute"></option><option value="sine" data-i="inst.sine"></option></select></label><label class="inst"><span data-i="oct.label"></span><select class="langsel octsel" aria-label="Octaves"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label><div class="midibox"><button type="button" class="midibtn" aria-pressed="false"><span class="dot" aria-hidden="true"></span><span data-i="midi.conn"></span></button><span class="midistat" aria-live="polite"></span></div></div></header>
+  <nav class="roots" data-aria="iv.rootsAria"><span data-i="ch.key"></span><div id="croots"></div></nav>
+  <main id="capp"></main>
+  <footer><span data-i="nsys"></span> <span data-i="ch.foot"></span></footer>
+</div></div>
+<!-- ===== /CHORDS TAB ===== -->
+<!-- ===== SUPPORTERS (removable: this block, the SUPPORTERS CSS and the SUPPORTERS script) ===== -->
+<aside class="thanks" aria-labelledby="thanks-l"><div class="thanks-in" id="thanks" hidden>
+  <span class="thanks-l" id="thanks-l"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.7-9.2C.8 8.6 2.6 5 6 5c2 0 3.3 1.1 4 2.2h4C14.7 6.1 16 5 18 5c3.4 0 5.200 3.600 3.700 6.800C19.500 16.400 12 21 12 21z" transform="translate(0 -.5)"/></svg><span id="thanks-t"></span></span>
+  <ul class="thanks-n" id="thanks-n"></ul>
+</div></aside>
+<!-- ===== /SUPPORTERS ===== -->
+<script>
+/* ===== SUPPORTERS script ===== */
+(function(){
+  // Add new supporters here (just append a name):
+  const SUPPORTERS = ['dominik'];
+  const TXT = {
+    en:'Thank you to everyone who supports this site:',
+    pl:'Dziękuję wszystkim, którzy wspierają tę stronę:',
+    de:'Danke an alle, die diese Seite unterstützen:',
+    es:'Gracias a todos los que apoyan este sitio:',
+    fr:'Merci à tous ceux qui soutiennent ce site :',
+    nl:'Bedankt aan iedereen die deze site steunt:',
+    no:'Takk til alle som støtter denne siden:'
+  };
+  const box=document.getElementById('thanks'), list=document.getElementById('thanks-n'), label=document.getElementById('thanks-t');
+  if(!SUPPORTERS.length) return;
+  SUPPORTERS.forEach(n=>{const li=document.createElement('li');li.textContent=n;list.appendChild(li);});
+  const paint=()=>{label.textContent=TXT[document.documentElement.lang]||TXT.en;};
+  box.hidden=false; paint();
+  new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+})();
+/* ===== /SUPPORTERS script ===== */
+</script>
+<script>
+const I18N = {
+pl: {
+ title:'Ściąga z interwałów i skal', 'tab.iv':'Interwały', 'tab.sc':'Skale',
+ 'iv.h1':'Ściąga z interwałów',
+ 'iv.intro':'Interwał to odległość między dwoma dźwiękami, liczona w półtonach. Wybierz dźwięk, od którego liczysz, i odsłuchaj każdy interwał w górę, w dół albo razem. Obok są piosenki, po których łatwo go rozpoznać.',
+ 'iv.l1':'konsonans doskonały (interwały czyste)','iv.l2':'konsonans niedoskonały (tercje i seksty)','iv.l3':'dysonans',
+ 'iv.rootsAria':'Dźwięk podstawowy','iv.from':'Od dźwięku',
+ 'iv.invH':'Przewroty','iv.invP':'Przewrót to ten sam interwał po przeniesieniu dolnej nuty o oktawę w górę. Para zawsze daje razem 12 półtonów. Mały zamienia się w wielki, czysty zostaje czysty, a tryton przechodzi sam w siebie.',
+ 'iv.earH':'Sprawdź słuch','iv.earP':'Leci losowy interwał od losowego dźwięku: najpierw nuta po nucie w górę, potem obie razem.',
+ 'iv.play':'Zagraj interwał','iv.qmsg':'Kliknij, posłuchaj i wybierz odpowiedź.','iv.which':'Który to interwał?','iv.again':'Powtórz','iv.next':'Następny interwał','iv.ok':'Dobrze: ','iv.bad':'Pudło. To była: ',
+ 'iv.foot':'Symbole po polsku: znak &gt; oznacza interwał mały albo zmniejszony, znak &lt; wielki albo zwiększony, dlatego sama 7 to septyma mała.',
+ 'iv.tag.per':'konsonans doskonały','iv.tag.con':'konsonans niedoskonały','iv.tag.dis':'dysonans',
+ 'iv.b.play':'Zagraj','iv.b.up':'W górę','iv.b.down':'W dół','iv.b.both':'Razem',
+ 'iv.none':'Ten sam dźwięk zagrany dwa razy. Punkt wyjścia do liczenia reszty.','a4':'4<','d5':'5>','kbd':'Klawiatura:',
+ 'sc.h1':'Ściąga ze skal',
+ 'sc.intro':'Wybierz tonację, a wszystkie skale przestawią się na nią. Między nutami stoi odległość: <b>1</b> to cały ton, <b>½</b> półton, <b>1½</b> półtora tonu. Pod nutą jest stopień liczony względem gamy durowej. Obwódka oznacza prymę. W klawisze można klikać.',
+ 'sc.rootsAria':'Tonacja','sc.key':'Tonacja',
+ 'sc.foot':'',
+ 'nsys.us':'Zapis amerykański (angielski), taki jak w DAW-ach i rekordboxie: B to polskie H, a B♭ to polskie B.',
+ 'nsys.de':'Zapis niemiecki (polski): H to angielskie B, a B to angielskie B♭. Końcówka -is oznacza krzyżyk (Cis = C♯), a -es bemol (Des = D♭). Wyjątki to Es i As.',
+ 'nsys.tip':'Zapis nut: US = amerykański (B, B♭), DE = niemiecki (H, B)',
+ 'sc.intro2':'Wszystkie cztery zaczynają się tak samo: <b>{base}</b>. Różnią się tylko 6. i 7. stopniem, więc wystarczy zapamiętać tę tabelkę.',
+ 'sc.min7':'mała septyma','sc.maj7':'wielka septyma','sc.min6':'mała seksta','sc.maj6':'wielka seksta',
+ 't.nat':'Naturalna','t.har':'Harmoniczna','t.dor':'Dorycka','t.mel':'Melodyczna',
+ 'sc.play':'Zagraj','sc.playud':'Zagraj w górę i w dół'
+},
+en: {
+ title:'Intervals & Scales Cheat Sheet', 'tab.iv':'Intervals', 'tab.sc':'Scales',
+ 'iv.h1':'Interval cheat sheet',
+ 'iv.intro':'An interval is the distance between two notes, counted in semitones. Pick the note you count from and listen to each interval going up, going down, or together. Next to each one are songs that make it easy to recognise.',
+ 'iv.l1':'perfect consonance (perfect intervals)','iv.l2':'imperfect consonance (thirds and sixths)','iv.l3':'dissonance',
+ 'iv.rootsAria':'Root note','iv.from':'From note',
+ 'iv.invH':'Inversions','iv.invP':'An inversion is the same interval after moving the lower note up an octave. A pair always adds up to 12 semitones. Minor becomes major, perfect stays perfect, and the tritone turns into itself.',
+ 'iv.earH':'Ear test','iv.earP':'A random interval plays from a random note: first note by note going up, then both together.',
+ 'iv.play':'Play interval','iv.qmsg':'Click, listen and choose an answer.','iv.which':'Which interval is it?','iv.again':'Repeat','iv.next':'Next interval','iv.ok':'Correct: ','iv.bad':'Missed. It was: ',
+ 'iv.foot':'Symbols: m = minor, M = major, P = perfect, A = augmented, d = diminished, TT = tritone.',
+ 'iv.tag.per':'perfect consonance','iv.tag.con':'imperfect consonance','iv.tag.dis':'dissonance',
+ 'iv.b.play':'Play','iv.b.up':'Up','iv.b.down':'Down','iv.b.both':'Together',
+ 'iv.none':'The same note played twice. The starting point for counting all the rest.','a4':'A4','d5':'d5','kbd':'Keyboard:',
+ 'sc.h1':'Scale cheat sheet',
+ 'sc.intro':'Pick a key and all the scales will shift to it. Between the notes is the distance: <b>1</b> is a whole tone, <b>½</b> a semitone, <b>1½</b> a tone and a half. Under each note is its degree, counted against the major scale. The outline marks the root. You can click the keys.',
+ 'sc.rootsAria':'Key','sc.key':'Key',
+ 'sc.foot':'',
+ 'nsys.us':'American (English) notation, as in DAWs and rekordbox: B is the note called H in German notation, and B♭ is called B there.',
+ 'nsys.de':'German notation: H is the English B, and B is the English B♭. The ending -is means sharp (Cis = C♯), -es means flat (Des = D♭). The exceptions are Es and As.',
+ 'nsys.tip':'Note names: US = American (B, B♭), DE = German (H, B)',
+ 'sc.intro2':'All four start the same way: <b>{base}</b>. They differ only in the 6th and 7th degree, so you only need to remember this table.',
+ 'sc.min7':'minor 7th','sc.maj7':'major 7th','sc.min6':'minor 6th','sc.maj6':'major 6th',
+ 't.nat':'Natural','t.har':'Harmonic','t.dor':'Dorian','t.mel':'Melodic',
+ 'sc.play':'Play','sc.playud':'Play up and down','semi.1':'1 semitone','semi.n':'{n} semitones'
+},
+de: {"title": "Intervall- und Tonleiter-Spickzettel","tab.iv": "Intervalle","tab.sc": "Tonleitern","iv.h1": "Intervall-Spickzettel","iv.intro": "Ein Intervall ist der Abstand zwischen zwei Tönen, gezählt in Halbtönen. Wähle den Ausgangston und höre jedes Intervall aufwärts, abwärts oder zusammen. Daneben stehen Lieder, an denen man es leicht erkennt.","iv.l1": "reine Konsonanz (reine Intervalle)","iv.l2": "unvollkommene Konsonanz (Terzen und Sexten)","iv.l3": "Dissonanz","iv.rootsAria": "Grundton","iv.from": "Vom Ton","iv.invH": "Umkehrungen","iv.invP": "Eine Umkehrung ist dasselbe Intervall, nachdem der untere Ton eine Oktave nach oben verschoben wurde. Ein Paar ergibt immer 12 Halbtöne. Aus klein wird groß, rein bleibt rein, und der Tritonus wird zu sich selbst.","iv.earH": "Gehörtraining","iv.earP": "Ein zufälliges Intervall erklingt von einem zufälligen Ton: erst Ton für Ton aufwärts, dann beide zusammen.","iv.play": "Intervall abspielen","iv.qmsg": "Klicken, zuhören und eine Antwort wählen.","iv.which": "Welches Intervall ist es?","iv.again": "Wiederholen","iv.next": "Nächstes Intervall","iv.ok": "Richtig: ","iv.bad": "Daneben. Es war: ","iv.foot": "Symbole: m = klein, M = groß, P = rein, A = übermäßig, d = vermindert, TT = Tritonus.","iv.tag.per": "reine Konsonanz","iv.tag.con": "unvollkommene Konsonanz","iv.tag.dis": "Dissonanz","iv.b.play": "Abspielen","iv.b.up": "Aufwärts","iv.b.down": "Abwärts","iv.b.both": "Zusammen","iv.none": "Derselbe Ton zweimal gespielt. Der Ausgangspunkt, um alle anderen zu zählen.","kbd": "Klaviatur:","sc.h1": "Tonleiter-Spickzettel","sc.intro": "Wähle eine Tonart, und alle Tonleitern wechseln dorthin. Zwischen den Noten steht der Abstand: <b>1</b> ist ein Ganzton, <b>½</b> ein Halbton, <b>1½</b> anderthalb Töne. Unter jeder Note steht ihre Stufe, gezählt gegenüber der Dur-Tonleiter. Der Rahmen markiert den Grundton. Die Tasten kann man anklicken.","sc.rootsAria": "Tonart","sc.key": "Tonart","nsys.us": "Amerikanische (englische) Notation, wie in DAWs und rekordbox: B ist der Ton, der in der deutschen Notation H heißt, und B♭ heißt dort B.","sc.intro2": "Alle vier beginnen gleich: <b>{base}</b>. Sie unterscheiden sich nur in der 6. und 7. Stufe, also genügt es, sich diese Tabelle zu merken.","sc.min7": "kleine Septime","sc.maj7": "große Septime","sc.min6": "kleine Sexte","sc.maj6": "große Sexte","t.nat": "Natürlich","t.har": "Harmonisch","t.dor": "Dorisch","t.mel": "Melodisch","sc.play": "Abspielen","semi.1": "1 Halbton","semi.n": "{n} Halbtöne"},
+nl: {"title": "Spiekbrief voor intervallen en toonladders","tab.iv": "Intervallen","tab.sc": "Toonladders","iv.h1": "Spiekbrief intervallen","iv.intro": "Een interval is de afstand tussen twee tonen, geteld in halve tonen. Kies de toon waarvan je telt en luister naar elk interval omhoog, omlaag of samen. Ernaast staan liedjes waaraan je het makkelijk herkent.","iv.l1": "zuivere consonant (zuivere intervallen)","iv.l2": "onzuivere consonant (tertsen en sexten)","iv.l3": "dissonant","iv.rootsAria": "Grondtoon","iv.from": "Vanaf toon","iv.invH": "Omkeringen","iv.invP": "Een omkering is hetzelfde interval nadat de onderste toon een octaaf omhoog is verplaatst. Een paar is samen altijd 12 halve tonen. Klein wordt groot, zuiver blijft zuiver en de tritonus wordt zichzelf.","iv.earH": "Gehoortest","iv.earP": "Een willekeurig interval klinkt vanaf een willekeurige toon: eerst toon voor toon omhoog, dan beide samen.","iv.play": "Speel interval","iv.qmsg": "Klik, luister en kies een antwoord.","iv.which": "Welk interval is het?","iv.again": "Herhaal","iv.next": "Volgend interval","iv.ok": "Goed: ","iv.bad": "Mis. Het was: ","iv.foot": "Symbolen: m = klein, M = groot, P = zuiver, A = overmatig, d = verminderd, TT = tritonus.","iv.tag.per": "zuivere consonant","iv.tag.con": "onzuivere consonant","iv.tag.dis": "dissonant","iv.b.play": "Speel","iv.b.up": "Omhoog","iv.b.down": "Omlaag","iv.b.both": "Samen","iv.none": "Dezelfde toon twee keer gespeeld. Het beginpunt om de rest te tellen.","kbd": "Toetsenbord:","sc.h1": "Spiekbrief toonladders","sc.intro": "Kies een toonsoort en alle toonladders schuiven mee. Tussen de noten staat de afstand: <b>1</b> is een hele toon, <b>½</b> een halve toon, <b>1½</b> anderhalve toon. Onder elke noot staat de trap, geteld ten opzichte van de majeurtoonladder. De omranding markeert de grondtoon. Je kunt op de toetsen klikken.","sc.rootsAria": "Toonsoort","sc.key": "Toonsoort","nsys.us": "Amerikaanse (Engelse) notatie, zoals in DAW's en rekordbox: B is de toon die in de Duitse notatie H heet, en B♭ heet daar B.","sc.intro2": "Alle vier beginnen hetzelfde: <b>{base}</b>. Ze verschillen alleen in de 6e en 7e trap, dus je hoeft alleen deze tabel te onthouden.","sc.min7": "kleine septiem","sc.maj7": "grote septiem","sc.min6": "kleine sext","sc.maj6": "grote sext","t.nat": "Natuurlijk","t.har": "Harmonisch","t.dor": "Dorisch","t.mel": "Melodisch","sc.play": "Speel","semi.1": "1 halve toon","semi.n": "{n} halve tonen"},
+no: {"title": "Jukselapp for intervaller og skalaer","tab.iv": "Intervaller","tab.sc": "Skalaer","iv.h1": "Jukselapp for intervaller","iv.intro": "Et intervall er avstanden mellom to toner, talt i halvtoner. Velg tonen du teller fra, og hør hvert intervall opp, ned eller sammen. Ved siden av står sanger som gjør det lett å kjenne det igjen.","iv.l1": "ren konsonans (rene intervaller)","iv.l2": "uren konsonans (ters og sekst)","iv.l3": "dissonans","iv.rootsAria": "Grunntone","iv.from": "Fra tone","iv.invH": "Omvendinger","iv.invP": "En omvending er samme intervall etter at den nederste tonen er flyttet en oktav opp. Et par blir alltid til sammen 12 halvtoner. Liten blir stor, ren forblir ren, og tritonus blir seg selv.","iv.earH": "Høretrening","iv.earP": "Et tilfeldig intervall spilles fra en tilfeldig tone: først tone for tone oppover, deretter begge samtidig.","iv.play": "Spill intervall","iv.qmsg": "Klikk, lytt og velg et svar.","iv.which": "Hvilket intervall er det?","iv.again": "Gjenta","iv.next": "Neste intervall","iv.ok": "Riktig: ","iv.bad": "Bom. Det var: ","iv.foot": "Symboler: m = liten, M = stor, P = ren, A = overstigende, d = forminsket, TT = tritonus.","iv.tag.per": "ren konsonans","iv.tag.con": "uren konsonans","iv.tag.dis": "dissonans","iv.b.play": "Spill","iv.b.up": "Opp","iv.b.down": "Ned","iv.b.both": "Sammen","iv.none": "Den samme tonen spilt to ganger. Utgangspunktet for å telle resten.","kbd": "Tangenter:","sc.h1": "Jukselapp for skalaer","sc.intro": "Velg en toneart, så flytter alle skalaene seg dit. Mellom notene står avstanden: <b>1</b> er en hel tone, <b>½</b> en halvtone, <b>1½</b> halvannen tone. Under hver note står trinnet, talt mot durskalaen. Omrisset markerer grunntonen. Du kan klikke på tangentene.","sc.rootsAria": "Toneart","sc.key": "Toneart","nsys.us": "Amerikansk (engelsk) notasjon, som i DAW-er og rekordbox: B er tonen som heter H i norsk og tysk notasjon, og B♭ heter B der.","sc.intro2": "Alle fire begynner likt: <b>{base}</b>. De skiller seg bare på 6. og 7. trinn, så det holder å huske denne tabellen.","sc.min7": "liten septim","sc.maj7": "stor septim","sc.min6": "liten sekst","sc.maj6": "stor sekst","t.nat": "Naturlig","t.har": "Harmonisk","t.dor": "Dorisk","t.mel": "Melodisk","sc.play": "Spill","semi.1": "1 halvtone","semi.n": "{n} halvtoner"},
+es: {"title": "Guía rápida de intervalos y escalas","tab.iv": "Intervalos","tab.sc": "Escalas","iv.h1": "Guía rápida de intervalos","iv.intro": "Un intervalo es la distancia entre dos notas, contada en semitonos. Elige la nota desde la que cuentas y escucha cada intervalo ascendente, descendente o a la vez. Al lado hay canciones que ayudan a reconocerlo.","iv.l1": "consonancia perfecta (intervalos justos)","iv.l2": "consonancia imperfecta (terceras y sextas)","iv.l3": "disonancia","iv.rootsAria": "Nota fundamental","iv.from": "Desde la nota","iv.invH": "Inversiones","iv.invP": "Una inversión es el mismo intervalo después de subir una octava la nota inferior. Un par siempre suma 12 semitonos. El menor se convierte en mayor, el justo sigue siendo justo y el tritono se convierte en sí mismo.","iv.earH": "Prueba de oído","iv.earP": "Suena un intervalo aleatorio desde una nota aleatoria: primero nota a nota hacia arriba y luego las dos a la vez.","iv.play": "Reproducir intervalo","iv.qmsg": "Haz clic, escucha y elige una respuesta.","iv.which": "¿Qué intervalo es?","iv.again": "Repetir","iv.next": "Siguiente intervalo","iv.ok": "Correcto: ","iv.bad": "Fallaste. Era: ","iv.foot": "Símbolos: m = menor, M = mayor, P = justo, A = aumentado, d = disminuido, TT = tritono.","iv.tag.per": "consonancia perfecta","iv.tag.con": "consonancia imperfecta","iv.tag.dis": "disonancia","iv.b.play": "Reproducir","iv.b.up": "Ascendente","iv.b.down": "Descendente","iv.b.both": "A la vez","iv.none": "La misma nota tocada dos veces. El punto de partida para contar el resto.","kbd": "Teclado:","sc.h1": "Guía rápida de escalas","sc.intro": "Elige una tonalidad y todas las escalas se desplazan a ella. Entre las notas está la distancia: <b>1</b> es un tono, <b>½</b> un semitono, <b>1½</b> un tono y medio. Debajo de cada nota está su grado, contado respecto a la escala mayor. El contorno marca la fundamental. Puedes hacer clic en las teclas.","sc.rootsAria": "Tonalidad","sc.key": "Tonalidad","nsys.us": "Notación americana (inglesa), como en los DAW y rekordbox: B es la nota que en la notación alemana se llama H, y B♭ se llama allí B.","sc.intro2": "Las cuatro empiezan igual: <b>{base}</b>. Solo se diferencian en los grados 6 y 7, así que basta con recordar esta tabla.","sc.min7": "séptima menor","sc.maj7": "séptima mayor","sc.min6": "sexta menor","sc.maj6": "sexta mayor","t.nat": "Natural","t.har": "Armónica","t.dor": "Dórica","t.mel": "Melódica","sc.play": "Reproducir","semi.1": "1 semitono","semi.n": "{n} semitonos"},
+fr: {"title": "Aide-mémoire des intervalles et des gammes","tab.iv": "Intervalles","tab.sc": "Gammes","iv.h1": "Aide-mémoire des intervalles","iv.intro": "Un intervalle est la distance entre deux notes, comptée en demi-tons. Choisissez la note de départ et écoutez chaque intervalle en montant, en descendant ou ensemble. À côté se trouvent des chansons qui aident à le reconnaître.","iv.l1": "consonance parfaite (intervalles justes)","iv.l2": "consonance imparfaite (tierces et sixtes)","iv.l3": "dissonance","iv.rootsAria": "Note fondamentale","iv.from": "À partir de","iv.invH": "Renversements","iv.invP": "Un renversement est le même intervalle après avoir monté la note grave d'une octave. Une paire fait toujours 12 demi-tons. Le mineur devient majeur, le juste reste juste et le triton devient lui-même.","iv.earH": "Test d'oreille","iv.earP": "Un intervalle aléatoire est joué depuis une note aléatoire : d'abord note par note en montant, puis les deux ensemble.","iv.play": "Jouer l'intervalle","iv.qmsg": "Cliquez, écoutez et choisissez une réponse.","iv.which": "Quel est cet intervalle ?","iv.again": "Répéter","iv.next": "Intervalle suivant","iv.ok": "Bien : ","iv.bad": "Raté. C'était : ","iv.foot": "Symboles : m = mineur, M = majeur, P = juste, A = augmenté, d = diminué, TT = triton.","iv.tag.per": "consonance parfaite","iv.tag.con": "consonance imparfaite","iv.tag.dis": "dissonance","iv.b.play": "Jouer","iv.b.up": "En montant","iv.b.down": "En descendant","iv.b.both": "Ensemble","iv.none": "La même note jouée deux fois. Le point de départ pour compter le reste.","kbd": "Clavier :","sc.h1": "Aide-mémoire des gammes","sc.intro": "Choisissez une tonalité et toutes les gammes s'y déplacent. Entre les notes se trouve la distance : <b>1</b> est un ton, <b>½</b> un demi-ton, <b>1½</b> un ton et demi. Sous chaque note se trouve son degré, compté par rapport à la gamme majeure. Le contour marque la fondamentale. Vous pouvez cliquer sur les touches.","sc.rootsAria": "Tonalité","sc.key": "Tonalité","nsys.us": "Notation américaine (anglaise), comme dans les DAW et rekordbox : B est la note appelée H dans la notation allemande, et B♭ s'y appelle B.","sc.intro2": "Les quatre commencent de la même façon : <b>{base}</b>. Elles ne diffèrent que par les 6e et 7e degrés, il suffit donc de retenir ce tableau.","sc.min7": "septième mineure","sc.maj7": "septième majeure","sc.min6": "sixte mineure","sc.maj6": "sixte majeure","t.nat": "Naturelle","t.har": "Harmonique","t.dor": "Dorienne","t.mel": "Mélodique","sc.play": "Jouer","semi.1": "1 demi-ton","semi.n": "{n} demi-tons"}
+};
+const INST_T = {"en": {"inst.label": "Instrument", "inst.piano": "Piano", "inst.epiano": "Electric piano", "inst.organ": "Organ", "inst.guitar": "Guitar", "inst.flute": "Flute", "inst.sine": "Pure sine tone"}, "pl": {"inst.label": "Instrument", "inst.piano": "Pianino", "inst.epiano": "Pianino elektryczne", "inst.organ": "Organy", "inst.guitar": "Gitara", "inst.flute": "Flet", "inst.sine": "Czysty sinus"}, "de": {"inst.label": "Instrument", "inst.piano": "Klavier", "inst.epiano": "E-Piano", "inst.organ": "Orgel", "inst.guitar": "Gitarre", "inst.flute": "Flöte", "inst.sine": "Reiner Sinuston"}, "es": {"inst.label": "Instrumento", "inst.piano": "Piano", "inst.epiano": "Piano eléctrico", "inst.organ": "Órgano", "inst.guitar": "Guitarra", "inst.flute": "Flauta", "inst.sine": "Tono senoidal puro"}, "fr": {"inst.label": "Instrument", "inst.piano": "Piano", "inst.epiano": "Piano électrique", "inst.organ": "Orgue", "inst.guitar": "Guitare", "inst.flute": "Flûte", "inst.sine": "Onde sinusoïdale pure"}, "nl": {"inst.label": "Instrument", "inst.piano": "Piano", "inst.epiano": "Elektrische piano", "inst.organ": "Orgel", "inst.guitar": "Gitaar", "inst.flute": "Fluit", "inst.sine": "Zuivere sinustoon"}, "no": {"inst.label": "Instrument", "inst.piano": "Piano", "inst.epiano": "Elektrisk piano", "inst.organ": "Orgel", "inst.guitar": "Gitar", "inst.flute": "Fløyte", "inst.sine": "Ren sinustone"}};
+// ---- instruments (Web Audio synthesis, no samples) ----
+const INSTS = ['piano', 'epiano', 'organ', 'guitar', 'flute', 'sine'];
+let INST = 'piano';
+try { const v = localStorage.getItem('inst'); if (INSTS.includes(v)) INST = v; } catch (e) {}
+// h: partials [ratio, gain]; a: attack; sus: hold for the note length then release (else decay); lp: filter sweep; vib: vibrato depth in cents; g: loudness trim
+const VOICES = {
+  piano:  { h: [[1,1],[2,.45],[3,.2],[4,.1],[5,.05]], a: .006, g: 1, ring: 4 },
+  epiano: { h: [[1,1],[2,.25],[3,.08],[6,.05]], a: .01, g: 1, ring: 3 },
+  organ:  { h: [[1,.8],[2,.6],[3,.35],[4,.3],[6,.15],[8,.1]], a: .02, sus: .08, g: .7 },
+  guitar: { h: [[1,1],[2,.6],[3,.4],[4,.3],[5,.2]], a: .003, lp: [4500, 900], g: .9, ring: 2.5 },
+  flute:  { h: [[1,1],[2,.15],[3,.05]], a: .08, sus: .12, vib: 7, g: .9 },
+  sine:   { h: [[1,1]], a: .02, sus: .08, g: .8 }
+};
+// ---- audio engine: ONE shared AudioContext for every tab ----
+// dur given  -> a timed note (the old behaviour: attack, then decay/release by itself)
+// dur absent -> a held note (MIDI): sounds until voice.release() is called
+const Sound = (() => {
+  const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let ctx = null, master = null, el = null, kicked = false;
+  const live = new Set(), MAXV = 40;
+
+  // 1 second of (practically) silent audio. On iOS, playing a looping <audio> element switches the page's audio
+  // session to "playback", which is what lets Web Audio ignore the Ring/Silent switch.
+  const silentSrc = () => {
+    const rate = 8000, n = rate, buf = new ArrayBuffer(44 + n * 2), dv = new DataView(buf);
+    const wr = (o, str) => { for (let i = 0; i < str.length; i++) dv.setUint8(o + i, str.charCodeAt(i)); };
+    wr(0, 'RIFF'); dv.setUint32(4, 36 + n * 2, true); wr(8, 'WAVE'); wr(12, 'fmt ');
+    dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
+    dv.setUint32(24, rate, true); dv.setUint32(28, rate * 2, true); dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
+    wr(36, 'data'); dv.setUint32(40, n * 2, true);
+    for (let i = 0; i < n; i++) dv.setInt16(44 + i * 2, i % 2 ? 1 : -1, true); // +-1 LSB, about -90 dB: inaudible
+    const u8 = new Uint8Array(buf); let bin = '';
+    for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i]);
+    return 'data:audio/wav;base64,' + btoa(bin);
+  };
+
+  // Safe to call as often as you like. Must run inside a user gesture the first time (browser autoplay rules).
+  function ensure() {
+    if (!ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ctx = new AC();
+      master = ctx.createGain(); master.gain.value = 0.9;
+      const comp = ctx.createDynamicsCompressor(); // keeps several simultaneous notes from clipping
+      comp.threshold.value = -16; comp.knee.value = 14; comp.ratio.value = 5; comp.attack.value = 0.004; comp.release.value = 0.25;
+      master.connect(comp); comp.connect(ctx.destination);
+    }
+    try { if (navigator.audioSession && navigator.audioSession.type !== 'playback') navigator.audioSession.type = 'playback'; } catch (e) {}
+    if (IOS) {
+      if (!el) { el = new Audio(); el.loop = true; el.preload = 'auto'; el.setAttribute('playsinline', ''); el.src = silentSrc(); }
+      if (el.paused) { const p = el.play(); if (p && p.catch) p.catch(() => {}); }
+    }
+    if (ctx.state !== 'running') { const p = ctx.resume(); if (p && p.catch) p.catch(() => {}); }
+    if (!kicked) { kicked = true; const b = ctx.createBufferSource(); b.buffer = ctx.createBuffer(1, 1, 22050); b.connect(ctx.destination); b.start(0); }
+    return ctx;
+  }
+  ['click', 'touchend', 'pointerup', 'keydown'].forEach(ev => window.addEventListener(ev, ensure, { capture: true, passive: true }));
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { if (el) el.pause(); } else if (ctx) ensure();
+  });
+
+  function start(semi, o) {
+    o = o || {};
+    const c = ensure(); if (!c) return null;
+    const inst = INST, v = VOICES[inst], t0 = c.currentTime + 0.005;
+    const f = 261.63 * Math.pow(2, semi / 12), held = o.dur == null, dur = o.dur || 0;
+    const peak = (o.vol == null ? 0.25 : o.vol) * v.g, sum = v.h.reduce((a, p) => a + p[1], 0);
+    const env = c.createGain(), rel = c.createGain();   // env = the note's own shape, rel = release / fade-out
+    env.gain.setValueAtTime(0.0001, t0);
+    env.gain.exponentialRampToValueAtTime(peak, t0 + v.a);
+    let stopAt = null;
+    if (held) {
+      if (!v.sus) { env.gain.exponentialRampToValueAtTime(0.0001, t0 + v.ring); stopAt = t0 + v.ring + 0.05; }
+    } else {
+      const end = t0 + dur;
+      if (v.sus) { env.gain.setValueAtTime(peak, Math.max(end, t0 + v.a + 0.001)); env.gain.exponentialRampToValueAtTime(0.0001, end + v.sus); stopAt = end + v.sus + 0.05; }
+      else { env.gain.exponentialRampToValueAtTime(0.0001, end + 0.5); stopAt = end + 0.55; }
+    }
+    let node = env;
+    if (v.lp) { const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(v.lp[0], t0); lp.frequency.exponentialRampToValueAtTime(v.lp[1], t0 + 0.45); env.connect(lp); node = lp; }
+    node.connect(rel); rel.connect(master);
+    const srcs = []; let lg = null;
+    if (v.vib) { const lfo = c.createOscillator(); lg = c.createGain(); lfo.frequency.value = 5.2; lg.gain.value = v.vib; lfo.connect(lg); lfo.start(t0); srcs.push(lfo); }
+    v.h.forEach(([r, g]) => {
+      if (f * r > 16000) return; // would alias on very high notes
+      const osc = c.createOscillator(), og = c.createGain();
+      osc.type = inst === 'guitar' ? 'sawtooth' : 'sine'; osc.frequency.value = f * r; og.gain.value = g / sum;
+      if (lg) lg.connect(osc.detune);
+      osc.connect(og); og.connect(env); osc.start(t0); srcs.push(osc);
+    });
+    if (!srcs.length) return null;
+    if (stopAt != null) srcs.forEach(x => x.stop(stopAt));
+    let done = false;
+    const finish = (sec) => {
+      if (done) return; done = true; live.delete(voice);
+      const n = c.currentTime;
+      try { rel.gain.cancelScheduledValues(n); rel.gain.setValueAtTime(1, n); rel.gain.exponentialRampToValueAtTime(0.0001, n + sec); } catch (e) {}
+      srcs.forEach(x => { try { x.stop(n + sec + 0.03); } catch (e) {} });
+    };
+    const voice = { group: o.group, semi, fade: (sec) => finish(sec == null ? 0.05 : sec), release: () => finish(held ? (v.sus || 0.3) : 0.05) };
+    srcs[srcs.length - 1].onended = () => live.delete(voice);
+    live.add(voice);
+    while (live.size > MAXV) live.values().next().value.fade(0.04);
+    return voice;
+  }
+  // fade out one group of sounds, leaving everything else playing
+  const fadeGroup = (g, sec) => [...live].filter(x => x.group === g).forEach(x => x.fade(sec == null ? 0.06 : sec));
+  const fadeAll = (sec) => [...live].filter(x => x.group !== 'midi').forEach(x => x.fade(sec == null ? 0.08 : sec));
+  const running = () => !!ctx && ctx.state === 'running';
+  return { start, ensure, fadeGroup, fadeAll, running };
+})();
+
+// ---- playback scheduling + key highlighting (shared) ----
+// Every play button owns a "group". Pressing a button restarts ONLY its own group, so sounds from different buttons
+// and keys layer on top of each other instead of cutting each other off.
+const Player = (() => {
+  const groups = new Map();
+  const G = (g) => { let r = groups.get(g); if (!r) groups.set(g, r = { timers: new Set(), lights: new Set() }); return r; };
+  const on = (el) => { el._h = (el._h || 0) + 1; el.classList.add('hit'); };
+  const off = (el) => { el._h = Math.max(0, (el._h || 0) - 1); if (!el._h) el.classList.remove('hit'); };
+  function light(g, box, semi, ms) {
+    const el = box && box.querySelector('.k[data-s="' + foldSemi(semi) + '"]'); if (!el) return;
+    const r = G(g), rec = {};
+    on(el);
+    rec.undo = () => { clearTimeout(rec.id); r.lights.delete(rec); off(el); };
+    rec.id = setTimeout(rec.undo, ms);
+    r.lights.add(rec);
+  }
+  function later(g, fn, ms) {
+    const r = G(g), rec = {};
+    rec.id = setTimeout(() => { r.timers.delete(rec); fn(); }, ms);
+    r.timers.add(rec);
+  }
+  function stop(g) {
+    const r = groups.get(g);
+    if (r) { r.timers.forEach(x => clearTimeout(x.id)); r.timers.clear(); [...r.lights].forEach(x => x.undo()); }
+    Sound.fadeGroup(g);
+  }
+  function stopAll() { groups.forEach((_, g) => stop(g)); Sound.fadeAll(); }
+  // evs: [{t (ms, default 0), semi, dur, vol, hl (highlight ms)}]
+  function play(g, box, evs) {
+    stop(g);
+    evs.forEach(e => {
+      const go = () => { Sound.start(e.semi, { dur: e.dur == null ? 0.6 : e.dur, vol: e.vol, group: g }); light(g, box, e.semi, e.hl || 300); };
+      if (e.t) later(g, go, e.t); else go();   // t=0 runs synchronously, inside the tap (needed by iOS)
+    });
+  }
+  function key(box, semi, dur) {
+    Sound.start(semi, { dur: dur || 0.6, group: 'key' });
+    light('key', box, semi, 300);
+  }
+  // light the matching key on every keyboard of the visible tab for as long as a MIDI note is held
+  function holdKeys(f) {
+    const els = [...document.querySelectorAll('[role="tabpanel"]:not([hidden]) .k[data-s="' + f + '"]')];
+    els.forEach(on);
+    return () => els.forEach(off);
+  }
+  window.addEventListener('stopall', stopAll);
+  return { play, key, stop, stopAll, holdKeys };
+})();
+Object.keys(INST_T).forEach(l => Object.assign(I18N[l], INST_T[l]));
+const OCT_T = {"pl": {"midi.conn": "Połącz MIDI", "midi.disc": "Rozłącz MIDI", "oct.label": "Oktawy"}, "en": {"midi.conn": "Connect MIDI", "midi.disc": "Disconnect MIDI", "oct.label": "Octaves"}, "de": {"midi.conn": "MIDI verbinden", "midi.disc": "MIDI trennen", "oct.label": "Oktaven"}, "es": {"midi.conn": "Conectar MIDI", "midi.disc": "Desconectar MIDI", "oct.label": "Octavas"}, "fr": {"midi.conn": "Connecter le MIDI", "midi.disc": "Déconnecter le MIDI", "oct.label": "Octaves"}, "nl": {"midi.conn": "MIDI verbinden", "midi.disc": "MIDI loskoppelen", "oct.label": "Octaven"}, "no": {"midi.conn": "Koble til MIDI", "midi.disc": "Koble fra MIDI", "oct.label": "Oktaver"}};
+Object.keys(OCT_T).forEach(l => Object.assign(I18N[l], OCT_T[l]));
+
+const NEW_T = {
+  pl: { 'theme.toLight': 'Przełącz na jasny motyw', 'theme.toDark': 'Przełącz na ciemny motyw', 'midi.btn': 'Klawiatura MIDI',
+    'midi.none': 'nie znaleziono klawiatury. Podłącz ją, a pojawi się sama', 'midi.denied': 'zablokowane. Zezwól na MIDI w ustawieniach witryny w przeglądarce',
+    'midi.unsup': 'MIDI nie jest tu dostępne. Potrzebny jest Chrome, Edge lub Firefox na komputerze albo Chrome na Androidzie, przez HTTPS' },
+  en: { 'theme.toLight': 'Switch to light mode', 'theme.toDark': 'Switch to dark mode', 'midi.btn': 'MIDI keyboard',
+    'midi.none': 'no keyboard found. Plug one in and it will show up', 'midi.denied': "blocked. Allow MIDI access in your browser's site settings",
+    'midi.unsup': "MIDI isn't available here. It needs Chrome, Edge or Firefox on a computer, or Chrome on Android, over HTTPS" },
+  de: { 'theme.toLight': 'Zum hellen Modus wechseln', 'theme.toDark': 'Zum dunklen Modus wechseln', 'midi.btn': 'MIDI-Keyboard',
+    'midi.none': 'kein Keyboard gefunden. Einfach anschließen, es erscheint von selbst', 'midi.denied': 'blockiert. Erlaube den MIDI-Zugriff in den Website-Einstellungen deines Browsers',
+    'midi.unsup': 'MIDI ist hier nicht verfügbar. Nötig sind Chrome, Edge oder Firefox am Computer oder Chrome auf Android, über HTTPS' },
+  es: { 'theme.toLight': 'Cambiar al modo claro', 'theme.toDark': 'Cambiar al modo oscuro', 'midi.btn': 'Teclado MIDI',
+    'midi.none': 'no se encontró ningún teclado. Conéctalo y aparecerá solo', 'midi.denied': 'bloqueado. Permite el acceso MIDI en los ajustes del sitio de tu navegador',
+    'midi.unsup': 'MIDI no está disponible aquí. Hace falta Chrome, Edge o Firefox en ordenador, o Chrome en Android, mediante HTTPS' },
+  fr: { 'theme.toLight': 'Passer au mode clair', 'theme.toDark': 'Passer au mode sombre', 'midi.btn': 'Clavier MIDI',
+    'midi.none': "aucun clavier trouvé. Branchez-en un, il apparaîtra tout seul", 'midi.denied': "bloqué. Autorisez l'accès MIDI dans les réglages du site de votre navigateur",
+    'midi.unsup': "MIDI n'est pas disponible ici. Il faut Chrome, Edge ou Firefox sur ordinateur, ou Chrome sur Android, en HTTPS" },
+  nl: { 'theme.toLight': 'Naar lichte modus', 'theme.toDark': 'Naar donkere modus', 'midi.btn': 'MIDI-keyboard',
+    'midi.none': 'geen keyboard gevonden. Sluit er een aan en het verschijnt vanzelf', 'midi.denied': 'geblokkeerd. Sta MIDI-toegang toe in de site-instellingen van je browser',
+    'midi.unsup': 'MIDI is hier niet beschikbaar. Je hebt Chrome, Edge of Firefox nodig op een computer, of Chrome op Android, via HTTPS' },
+  no: { 'theme.toLight': 'Bytt til lys modus', 'theme.toDark': 'Bytt til mørk modus', 'midi.btn': 'MIDI-keyboard',
+    'midi.none': 'fant ikke noe keyboard. Koble til ett, så dukker det opp av seg selv', 'midi.denied': 'blokkert. Tillat MIDI-tilgang i nettleserens innstillinger for nettstedet',
+    'midi.unsup': 'MIDI er ikke tilgjengelig her. Det krever Chrome, Edge eller Firefox på datamaskin, eller Chrome på Android, over HTTPS' }
+};
+Object.keys(NEW_T).forEach(l => Object.assign(I18N[l], NEW_T[l]));
+
+const LANGS = ['en', 'de', 'es', 'fr', 'nl', 'no', 'pl'];
+let LANG = 'en';
+try {
+  const s = localStorage.getItem('lang'), n = (navigator.language || '').toLowerCase().slice(0, 2), m = (n === 'nb' || n === 'nn') ? 'no' : n;
+  LANG = LANGS.includes(s) ? s : LANGS.includes(m) ? m : 'en';
+} catch (e) {}
+let NSYS = 'us';
+let OCT = 2;   // keyboard length in octaves (1-4), default 2
+try { const o = parseInt(localStorage.getItem('oct'), 10); if (o >= 1 && o <= 4) OCT = o; } catch (e) {}
+// notes above the visible range are drawn on the same key one octave (or more) lower
+const foldSemi = (n) => { const R = 12 * OCT; while (n >= R) n -= 12; return n; };
+
+const t = (k) => k === 'nsys' ? I18N[LANG]['nsys.' + NSYS] : (I18N[LANG][k] ?? I18N.en[k] ?? k);
+const LET = 'CDEFGAB';
+const nn = (l, acc) => {
+  if (NSYS === 'us') return LET[l] + (acc < 0 ? '♭'.repeat(-acc) : '♯'.repeat(acc));
+  const c = LET[l];
+  if (acc === 0) return c === 'B' ? 'H' : c;
+  if (acc > 0) return (c === 'B' ? 'H' : c) + 'is'.repeat(acc);
+  if (c === 'B') return acc === -1 ? 'B' : 'Heses';
+  if (acc === -1) return (c === 'E' || c === 'A') ? c + 's' : c + 'es';
+  if (acc === -2 && (c === 'E' || c === 'A')) return c === 'E' ? 'Eses' : 'Asas';
+  return c + 'es'.repeat(-acc);
+};
+const conv = (str) => str.replace(/([A-G])([♯♭]?)/g, (m, c, a) => nn(LET.indexOf(c), a === '♯' ? 1 : a === '♭' ? -1 : 0));
+const KLAB = (str, big, small) => ' style="font-size:' + (str.length > 3 ? small : big) + 'px"';
+const applyStatic = (r) => {
+  r.querySelectorAll('[data-i]').forEach(e => e.innerHTML = t(e.dataset.i));
+  r.querySelectorAll('[data-aria]').forEach(e => e.setAttribute('aria-label', t(e.dataset.aria)));
+};
+
+(function(){
+// ---- music logic (pure) ----
+const L = 'CDEFGAB', LS = [0, 2, 4, 5, 7, 9, 11];
+const IV = [
+  { m: 0, sym: '1', name: 'Pryma', g: 'per', step: 0, songs: [] },
+  { m: 1, sym: '2>', name: 'Sekunda mała', g: 'dis', step: 1, songs: ['Amen', 'Szczęki', 'Różowa Pantera'] },
+  { m: 2, sym: '2', name: 'Sekunda wielka', g: 'dis', step: 1, songs: ['Do Re Mi (gama)', 'Happy Birthday', 'Yesterday (The Beatles)'] },
+  { m: 3, sym: '3>', name: 'Tercja mała', g: 'con', step: 2, songs: ['Olej Kujawski', 'Nothing Else Matters', 'Sto lat', 'Wlazł kotek'] },
+  { m: 4, sym: '3', name: 'Tercja wielka', g: 'con', step: 2, songs: ['Stary niedźwiedź', 'V Symfonia Beethovena', 'Ogłoszenie na PKP', 'Marsz Imperialny'] },
+  { m: 5, sym: '4', name: 'Kwarta czysta', g: 'per', step: 3, songs: ['We Wish You a Merry Christmas', 'Smells Like Teen Spirit', 'Płonie ognisko', 'Janosik', 'Amazing Grace'] },
+  { m: 6, sym: '4<', name: 'Tryton', g: 'dis', step: 3, alt: 4, sub: 'Kwarta zwiększona (4<) albo kwinta zmniejszona (5>). Dokładnie pół oktawy.', songs: ['Horrory', 'Enter Sandman', 'Black Sabbath'] },
+  { m: 7, sym: '5', name: 'Kwinta czysta', g: 'per', step: 4, songs: ['Były sobie świnki / kurki trzy', 'A B C D po angielsku', 'Przyśpiewki góralskie', 'Star Wars'] },
+  { m: 8, sym: '6>', name: 'Seksta mała', g: 'con', step: 5, songs: ['Shape of My Heart', 'Love Story (soundtrack)'] },
+  { m: 9, sym: '6', name: 'Seksta wielka', g: 'con', step: 5, songs: ['Polska, Biało-Czerwoni', 'Jingle Bells', 'To nie ja byłam Ewą'] },
+  { m: 10, sym: '7', name: 'Septyma mała', g: 'dis', step: 6, songs: ['The Winner Takes It All (ABBA)', 'Pretty Woman'] },
+  { m: 11, sym: '7<', name: 'Septyma wielka', g: 'dis', step: 6, songs: ['Take On Me (a-ha)', 'Amen od oktawy'] },
+  { m: 12, sym: '8', name: 'Oktawa', g: 'per', step: 7, songs: ['Over the Rainbow', 'Bóg się rodzi'] },
+];
+const IV_EN = {
+  name: ['Unison','Minor second','Major second','Minor third','Major third','Perfect fourth','Tritone','Perfect fifth','Minor sixth','Major sixth','Minor seventh','Major seventh','Octave'],
+  sym: ['P1','m2','M2','m3','M3','P4','TT','P5','m6','M6','m7','M7','P8'],
+  sub: 'Augmented fourth (A4) or diminished fifth (d5). Exactly half an octave.',
+  songs: [[], ['Jaws','The Pink Panther','Amen'], ['Do Re Mi (the scale)','Happy Birthday','Yesterday (The Beatles)'],
+    ['Smoke on the Water','Greensleeves','Nothing Else Matters'], ['Kumbaya','When the Saints Go Marching In',"Beethoven's 5th Symphony",'The Imperial March'],
+    ['Here Comes the Bride','We Wish You a Merry Christmas','Smells Like Teen Spirit','Amazing Grace'], ['The Simpsons theme','Maria (West Side Story)','Enter Sandman','Black Sabbath'],
+    ['Twinkle, Twinkle, Little Star','Star Wars','The Flintstones'], ['Shape of My Heart','Love Story (soundtrack)','The Entertainer'],
+    ['My Bonnie Lies Over the Ocean','NBC chimes','Jingle Bells'], ['The Winner Takes It All (ABBA)','Pretty Woman','Somewhere (West Side Story)'],
+    ['Take On Me (a-ha)','Amen (counted from the octave)'], ['Over the Rainbow']]
+};
+const SONG_X = {"de": {"Do Re Mi (the scale)": "Do Re Mi (die Tonleiter)", "Beethoven's 5th Symphony": "Beethovens 5. Sinfonie", "Love Story (soundtrack)": "Love Story (Filmmusik)", "Amen (counted from the octave)": "Amen (ab der Oktave gezählt)", "The Simpsons theme": "Die Simpsons (Titelmelodie)", "The Pink Panther": "Der rosarote Panther", "Jaws": "Der weiße Hai", "The Flintstones": "Familie Feuerstein"}, "nl": {"Do Re Mi (the scale)": "Do Re Mi (de toonladder)", "Beethoven's 5th Symphony": "Beethovens 5e symfonie", "Love Story (soundtrack)": "Love Story (filmmuziek)", "Amen (counted from the octave)": "Amen (geteld vanaf het octaaf)", "The Simpsons theme": "De Simpsons (intro)", "The Pink Panther": "De Roze Panter", "The Flintstones": "De Flintstones"}, "no": {"Do Re Mi (the scale)": "Do Re Mi (skalaen)", "Beethoven's 5th Symphony": "Beethovens 5. symfoni", "Love Story (soundtrack)": "Love Story (filmmusikk)", "Amen (counted from the octave)": "Amen (talt fra oktaven)", "The Simpsons theme": "The Simpsons (tema)", "Jaws": "Hajen", "The Flintstones": "Flintstone-familien"}, "es": {"Do Re Mi (the scale)": "Do Re Mi (la escala)", "Beethoven's 5th Symphony": "Quinta sinfonía de Beethoven", "Love Story (soundtrack)": "Love Story (banda sonora)", "Amen (counted from the octave)": "Amén (contado desde la octava)", "The Simpsons theme": "Los Simpson (tema)", "The Pink Panther": "La Pantera Rosa", "Jaws": "Tiburón", "The Flintstones": "Los Picapiedra"}, "fr": {"Do Re Mi (the scale)": "Do Ré Mi (la gamme)", "Beethoven's 5th Symphony": "Cinquième symphonie de Beethoven", "Love Story (soundtrack)": "Love Story (bande originale)", "Amen (counted from the octave)": "Amen (compté depuis l'octave)", "The Simpsons theme": "Les Simpson (générique)", "The Pink Panther": "La Panthère rose", "Jaws": "Les Dents de la mer", "The Flintstones": "La Famille Pierrafeu"}};
+const IV_X = {"de": {"name": ["Prim", "Kleine Sekunde", "Große Sekunde", "Kleine Terz", "Große Terz", "Reine Quarte", "Tritonus", "Reine Quinte", "Kleine Sexte", "Große Sexte", "Kleine Septime", "Große Septime", "Oktave"], "sub": "Übermäßige Quarte (A4) oder verminderte Quinte (d5). Genau eine halbe Oktave."}, "nl": {"name": ["Prime", "Kleine secunde", "Grote secunde", "Kleine terts", "Grote terts", "Reine kwart", "Tritonus", "Reine kwint", "Kleine sext", "Grote sext", "Kleine septiem", "Grote septiem", "Octaaf"], "sub": "Overmatige kwart (A4) of verminderde kwint (d5). Precies een halve octaaf."}, "no": {"name": ["Prim", "Liten sekund", "Stor sekund", "Liten ters", "Stor ters", "Ren kvart", "Tritonus", "Ren kvint", "Liten sekst", "Stor sekst", "Liten septim", "Stor septim", "Oktav"], "sub": "Overstigende kvart (A4) eller forminsket kvint (d5). Nøyaktig en halv oktav."}, "es": {"name": ["Unísono", "Segunda menor", "Segunda mayor", "Tercera menor", "Tercera mayor", "Cuarta justa", "Tritono", "Quinta justa", "Sexta menor", "Sexta mayor", "Séptima menor", "Séptima mayor", "Octava"], "sub": "Cuarta aumentada (A4) o quinta disminuida (d5). Exactamente media octava."}, "fr": {"name": ["Unisson", "Seconde mineure", "Seconde majeure", "Tierce mineure", "Tierce majeure", "Quarte juste", "Triton", "Quinte juste", "Sixte mineure", "Sixte majeure", "Septième mineure", "Septième majeure", "Octave"], "sub": "Quarte augmentée (A4) ou quinte diminuée (d5). Exactement une demi-octave."}};
+IV.forEach(v => v.pl = { name: v.name, sym: v.sym, songs: v.songs, sub: v.sub });
+const loc = () => IV.forEach((v, i) => {
+  if (LANG === 'pl') Object.assign(v, v.pl);
+  else { const X = IV_X[LANG] || IV_EN; v.name = X.name[i]; v.sym = IV_EN.sym[i]; v.songs = IV_EN.songs[i].map(x => (SONG_X[LANG] || {})[x] ?? x); if (v.m === 6) v.sub = X.sub; }
+});
+const TAG = { per: 'konsonans doskonały', con: 'konsonans niedoskonały', dis: 'dysonans' };
+const esc = (s) => s.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const accStr = (a) => a < 0 ? '♭'.repeat(-a) : '♯'.repeat(a);
+const semis = (n) => LANG !== 'pl' ? (n === 1 ? t('semi.1') : t('semi.n').replace('{n}', n)) : n === 1 ? '1 półton' : (n >= 2 && n <= 4 ? n + ' półtony' : n + ' półtonów');
+
+// note at letter step and m semitones above a root given as [letter, accidental]
+function one(root, pc, step, m) {
+  const l = (root[0] + step) % 7;
+  const acc = ((pc + m) % 12 - LS[l] + 18) % 12 - 6;
+  return { name: nn(l, acc), acc };
+}
+// possible spellings of each root; black keys get a sharp and a flat option
+const ROOTS = [[[0,0]], [[0,1],[1,-1]], [[1,0]], [[1,1],[2,-1]], [[2,0]], [[3,0]], [[3,1],[4,-1]], [[4,0]], [[4,1],[5,-1]], [[5,0]], [[5,1],[6,-1]], [[6,0]]];
+// pick the root spelling that needs the fewest accidentals across all intervals
+function pickRoot(pc) {
+  let best = null, bestCost = 1e9;
+  ROOTS[pc].forEach(r => {
+    const cost = IV.filter(v => !v.alt).reduce((s, v) => s + Math.abs(one(r, pc, v.step, v.m).acc), 0);
+    if (cost <= bestCost) { best = r; bestCost = cost; }
+  });
+  return best;
+}
+// names of the upper note; the tritone can have two readable spellings
+function upper(root, pc, v) {
+  const a = one(root, pc, v.step, v.m);
+  if (!v.alt) return [a.name];
+  const both = [a, one(root, pc, v.alt, v.m)];
+  const ok = both.filter(n => Math.abs(n.acc) <= 1);
+  if (ok.length) return ok.map(n => n.name);
+  return [both.sort((x, y) => Math.abs(x.acc) - Math.abs(y.acc))[0].name];
+}
+
+// ---- rendering ----
+function keyboard(lab0, pc) {
+  const lab = {}; Object.keys(lab0).forEach(k => { lab[foldSemi(+k)] = lab0[k]; });
+  const top = pc + 12, W = 40, H = 150;
+  const ws = (i) => 12 * Math.floor(i / 7) + LS[i % 7];
+  const N = 7 * OCT; // OCT oktaw C–B (domyślnie 2)
+  let w = '', b = '';
+  for (let i = 0; i < N; i++) {
+    const s = ws(i), on = s in lab, x = i * W;
+    w += `<rect class="k w${on ? ' on' : ''}" data-s="${s}" x="${x + 1}" y="0" width="${W - 2}" height="${H}" rx="4"/>`;
+    if (on) {
+      w += `<text class="lw"${KLAB(lab[s], 17, 12)} x="${x + W / 2}" y="${H - 14}">${lab[s]}</text>`;
+      if (s === pc) w += `<circle class="dw" cx="${x + W / 2}" cy="${H - 42}" r="4"/>`;
+    }
+    if (i < N - 1 && [0, 1, 3, 4, 5].includes(i % 7)) {
+      const bs = s + 1, bon = bs in lab, bx = x + W - 12;
+      b += `<rect class="k b${bon ? ' on' : ''}" data-s="${bs}" x="${bx}" y="0" width="24" height="92" rx="3"/>`;
+      if (bon) {
+        b += `<text class="lb"${KLAB(lab[bs], 12, 9)} x="${bx + 12}" y="80">${lab[bs]}</text>`;
+        if (bs === pc) b += `<circle class="db" cx="${bx + 12}" cy="56" r="3"/>`;
+      }
+    }
+  }
+  const vw = N * W + 12;
+  return `<svg viewBox="0 0 ${vw} ${H + 12}" style="max-width:${N * 48 + 12}px" role="img" aria-label="${t('kbd')} ${Object.values(lab).join(' i ')}"><rect class="bed" width="${vw}" height="${H + 12}" rx="9"/><g transform="translate(6,6)">${w}${b}</g></svg>`;
+}
+
+const TRI = '<svg viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0l10 6-10 6z"/></svg>';
+function render(pc) {
+  const root = pickRoot(pc), rn = nn(root[0], root[1]);
+  let html = '';
+  IV.forEach(v => {
+    const up = upper(root, pc, v), lab = {};
+    lab[pc] = rn; lab[pc + v.m] = up[0];
+    const btns = v.m === 0
+      ? `<button type="button" id="p-0-up" data-iv="0" data-mode="up">${TRI}${t('iv.b.play')}</button>`
+      : ['up:' + t('iv.b.up'), 'down:' + t('iv.b.down'), 'both:' + t('iv.b.both')].map(x => { const [mode, t] = x.split(':'); return `<button type="button" id="p-${v.m}-${mode}" data-iv="${v.m}" data-mode="${mode}">${TRI}${t}</button>`; }).join('');
+    const songs = v.songs.length ? v.songs.map(s => `<li>${s}</li>`).join('') : '<li class="none">' + t('iv.none') + '</li>';
+    html += `<article class="iv" style="--hue:var(--c-${v.g})">
+      <div class="info">
+        <div class="head"><span class="sym">${esc(v.sym)}</span><div><h3>${v.name}</h3><p class="meta"><b>${semis(v.m)}</b> · ${t('iv.tag.' + v.g)}</p></div></div>
+        ${v.sub ? `<p class="sub">${esc(v.sub)}</p>` : ''}
+        <p class="notes"><b>${rn}</b><span>→</span><b>${up.join(' / ')}</b></p>
+        <div class="btns">${btns}</div>
+      </div>
+      <ul class="songs">${songs}</ul>
+      <div class="kb" id="kb-${v.m}">${keyboard(lab, pc)}</div>
+    </article>`;
+  });
+  document.getElementById('app').innerHTML = html;
+}
+
+if (typeof document !== 'undefined') {
+  let pc = 0;
+  try { const v = parseInt(localStorage.getItem('root'), 10); if (v >= 0 && v < 12) pc = v; } catch (e) {}
+  const LABELS = ['C', 'C♯ / D♭', 'D', 'D♯ / E♭', 'E', 'F', 'F♯ / G♭', 'G', 'G♯ / A♭', 'A', 'A♯ / B♭', 'B'];
+  const rootsEl = document.getElementById('roots');
+  const buildRoots = () => rootsEl.innerHTML = LABELS.map((l, i) => `<button type="button" id="root-${i}" data-root="${i}" aria-pressed="${i === pc}">${conv(l)}</button>`).join('');
+
+  const bySemi = (m) => IV.find(v => v.m === m);
+  const buildPairs = () => document.getElementById('pairs').innerHTML = [[1, 11], [2, 10], [3, 9], [4, 8], [5, 7], [6, 6]].map(([a, b]) =>
+    `<li><b style="--hue:var(--c-${bySemi(a).g})">${esc(a === 6 ? t('a4') : bySemi(a).sym)}</b><span>↔</span><b style="--hue:var(--c-${bySemi(b).g})">${esc(b === 6 ? t('d5') : bySemi(b).sym)}</b><span>${a} + ${b}</span></li>`).join('');
+  const ansEl = document.getElementById('answers');
+  const buildAns = () => ansEl.innerHTML = IV.filter(v => v.m > 0 && earPool().includes(v.m)).map(v => `<button type="button" id="ans-${v.m}" data-ans="${v.m}"><i>${esc(v.sym)}</i>${v.name}</button>`).join('');
+
+
+  rootsEl.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-root]'); if (!b) return;
+    try { localStorage.setItem('root', +b.dataset.root); } catch (err) {}
+    window.dispatchEvent(new CustomEvent('rootchange', { detail: +b.dataset.root }));
+  });
+  const syncRoots = () => rootsEl.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', +x.dataset.root === pc));
+  const rootsInit = () => buildRoots();
+
+  document.getElementById('app').addEventListener('click', (e) => {
+    const p = e.target.closest('[data-iv]');
+    if (p) {
+      const m = +p.dataset.iv, mode = p.dataset.mode, box = document.getElementById('kb-' + m);
+      const lo = pc, hi = pc + m;
+      // each interval card is its own sound group: it only restarts itself, never other cards
+      Player.play('iv' + m, box, mode === 'both'
+        ? [{ semi: lo, dur: 1.1, vol: 0.18, hl: 800 }, { semi: hi, dur: 1.1, vol: 0.18, hl: 800 }]
+        : (mode === 'down' ? [hi, lo] : [lo, hi]).map((x, i) => ({ t: i * 520, semi: x, dur: 0.6, hl: 400 })));
+      return;
+    }
+    const k = e.target.closest('.k');
+    if (k) Player.key(k.closest('.kb'), +k.dataset.s);
+  });
+
+  // ---- ear quiz ----
+  let q = null, done = true, okN = 0, allN = 0;
+  const qBtn = document.getElementById('quiz-play'), qMsg = document.getElementById('quiz-msg'), qScore = document.getElementById('quiz-score');
+  let earPool = () => IV.filter(v => v.m > 0).map(v => v.m);   // default: every interval (the filter block below narrows it)
+  const resetQuiz = () => { Player.stop('quiz'); q = null; done = true; qMsg.textContent = t('iv.qmsg'); qBtn.textContent = t('iv.play'); };
+  qBtn.addEventListener('click', () => {
+    if (done) {
+      const pool = earPool(); q = { m: pool[Math.floor(Math.random() * pool.length)], r: Math.floor(Math.random() * 8) };
+      done = false;
+      ansEl.querySelectorAll('button').forEach(b => b.classList.remove('ok', 'bad'));
+      qMsg.textContent = t('iv.which');
+      qBtn.textContent = t('iv.again');
+    }
+    const lo = q.r, hi = q.r + q.m;
+    Player.play('quiz', null, [
+      { semi: lo, dur: 0.6 }, { t: 520, semi: hi, dur: 0.6 },
+      { t: 1250, semi: lo, dur: 1.1, vol: 0.18 }, { t: 1250, semi: hi, dur: 1.1, vol: 0.18 }]);
+  });
+  ansEl.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-ans]'); if (!b || !q || done) return;
+    const good = +b.dataset.ans === q.m, v = bySemi(q.m);
+    allN++; if (good) okN++;
+    document.getElementById('ans-' + q.m).classList.add('ok');
+    if (!good) b.classList.add('bad');
+    qMsg.textContent = (good ? t('iv.ok') : t('iv.bad')) + v.name.toLowerCase() + ', ' + semis(v.m) + '.';
+    qScore.textContent = okN + ' / ' + allN;
+    qBtn.textContent = t('iv.next');
+    done = true;
+  });
+
+  // ===== EAR TEST FILTER (removable: delete this block, the #earfilter div and the "EAR TEST FILTER CSS" block;
+  //       the earPool / resetQuiz hooks above and in buildAns/refresh are harmless without it) =====
+  const EF_T = {
+    en: { 'ef.label': 'Intervals in the test', 'ef.all': 'All', 'ef.hint': 'Tap to include or exclude. At least one stays on.' },
+    pl: { 'ef.label': 'Interwały w teście', 'ef.all': 'Wszystkie', 'ef.hint': 'Kliknij, aby dodać lub wykluczyć. Co najmniej jeden musi zostać.' },
+    de: { 'ef.label': 'Intervalle im Test', 'ef.all': 'Alle', 'ef.hint': 'Antippen zum Ein- oder Ausschließen. Mindestens eins bleibt aktiv.' },
+    es: { 'ef.label': 'Intervalos en la prueba', 'ef.all': 'Todos', 'ef.hint': 'Toca para incluir o excluir. Al menos uno queda activo.' },
+    fr: { 'ef.label': 'Intervalles dans le test', 'ef.all': 'Tous', 'ef.hint': 'Touchez pour inclure ou exclure. Au moins un reste actif.' },
+    nl: { 'ef.label': 'Intervallen in de test', 'ef.all': 'Alle', 'ef.hint': 'Tik om op te nemen of uit te sluiten. Minstens één blijft aan.' },
+    no: { 'ef.label': 'Intervaller i testen', 'ef.all': 'Alle', 'ef.hint': 'Trykk for å ta med eller utelate. Minst ett må være på.' }
+  };
+  Object.keys(EF_T).forEach(l => Object.assign(I18N[l], EF_T[l]));
+  const efBox = document.getElementById('earfilter');
+  const excluded = new Set();
+  try { const a = JSON.parse(localStorage.getItem('earx') || '[]'); if (Array.isArray(a)) a.forEach(m => { if (m >= 1 && m <= 12) excluded.add(m); }); } catch (e) {}
+  if (excluded.size > 11) excluded.clear();
+  earPool = () => IV.filter(v => v.m > 0 && !excluded.has(v.m)).map(v => v.m);
+  const syncFilter = () => {
+    const left = 12 - excluded.size;
+    efBox.querySelectorAll('[data-ef]').forEach(b => {
+      const m = +b.dataset.ef, on = !excluded.has(m);
+      b.setAttribute('aria-pressed', on);
+      if (on && left === 1) b.setAttribute('aria-disabled', 'true'); else b.removeAttribute('aria-disabled');
+    });
+    const all = document.getElementById('ef-all'); if (all) all.hidden = !excluded.size;
+  };
+  function buildFilter() {
+    efBox.innerHTML = `<div class="ef-head"><b>${t('ef.label')}</b><button type="button" class="ef-all" id="ef-all">${t('ef.all')}</button><span class="ef-hint">${t('ef.hint')}</span></div>
+      <div class="ef-chips">${IV.filter(v => v.m > 0).map(v => `<button type="button" class="ef-chip" id="ef-${v.m}" data-ef="${v.m}" style="--hue:var(--c-${v.g})"><i>${esc(v.sym)}</i>${v.name}</button>`).join('')}</div>`;
+    syncFilter();
+  }
+  efBox.addEventListener('click', (e) => {
+    if (e.target.closest('#ef-all')) excluded.clear();
+    else {
+      const b = e.target.closest('[data-ef]'); if (!b) return;
+      const m = +b.dataset.ef;
+      if (excluded.has(m)) excluded.delete(m);
+      else if (excluded.size < 11) excluded.add(m);   // never exclude everything
+      else return;
+    }
+    try { localStorage.setItem('earx', JSON.stringify([...excluded])); } catch (err) {}
+    syncFilter(); buildAns(); resetQuiz();           // a question that is no longer in the pool is dropped
+  });
+  // ===== /EAR TEST FILTER =====
+
+  const panel = document.getElementById('tab-iv');
+  const refresh = (full) => {
+    loc(); applyStatic(panel); buildRoots(); buildPairs(); syncRoots(); render(pc);
+    if (full) { if (typeof buildFilter === 'function') buildFilter(); buildAns(); q = null; done = true; qMsg.textContent = t('iv.qmsg'); qBtn.textContent = t('iv.play'); }
+  };
+  window.addEventListener('rootchange', (e) => { Player.stopAll(); pc = e.detail; syncRoots(); render(pc); });
+  window.addEventListener('langchange', () => { Player.stopAll(); refresh(true); });
+  window.addEventListener('nsyschange', () => { Player.stopAll(); refresh(false); });
+  window.addEventListener('octchange', () => { Player.stopAll(); refresh(false); });
+  refresh(true);
+}
+})();
+(function(){
+// ---- music logic (pure) ----
+const L = 'CDEFGAB', LS = [0, 2, 4, 5, 7, 9, 11];
+// root spelling per pitch class: [letter index, accidental]
+const MAJ = [[0,0],[1,-1],[1,0],[2,-1],[2,0],[3,0],[3,1],[4,0],[5,-1],[5,0],[6,-1],[6,0]];
+const MIN = [[0,0],[0,1],[1,0],[2,-1],[2,0],[3,0],[3,1],[4,0],[4,1],[5,0],[6,-1],[6,0]];
+const ACC = { '-2': '♭♭', '-1': '♭', '0': '', '1': '♯', '2': '♯♯' };
+const nm = (r) => nn(r[0], r[1]);
+
+// one scale note: letter step s and m semitones above the root
+function one(q, pc, s, m) {
+  const l = (q[pc][0] + s) % 7;
+  const acc = ((pc + m) % 12 - LS[l] + 18) % 12 - 6;
+  const d = m - LS[s];
+  return { name: nn(l, acc), acc, semi: pc + m, deg: (d < 0 ? '♭' : d > 0 ? '♯' : '') + (s + 1) };
+}
+
+const SCALES = [
+  { id: 'maj', sec: 0, hue: 'maj', q: MAJ, name: 'Jońska', sub: 'gama durowa',
+    deg: [[0,0],[1,2],[2,4],[3,5],[4,7],[5,9],[6,11]],
+    txt: () => 'Zwykła gama durowa. Punkt odniesienia dla całej reszty: stopnie w pozostałych skalach liczy się względem niej.' },
+  { id: 'nat', sec: 1, hue: 'nat', q: MIN, name: 'Naturalna', sub: 'eolska',
+    deg: [[0,0],[1,2],[2,3],[3,5],[4,7],[5,8],[6,10]],
+    txt: (c) => `Durowa z obniżonym 3., 6. i 7. stopniem. Ma te same dźwięki co gama durowa zaczęta trzy półtony wyżej: ${c.min}-moll to ${c.rel}-dur od innego miejsca.` },
+  { id: 'har', sec: 1, hue: 'har', q: MIN, name: 'Harmoniczna', sub: '',
+    deg: [[0,0],[1,2],[2,3],[3,5],[4,7],[5,8],[6,11]],
+    txt: () => 'Naturalna z podwyższonym 7. stopniem. Między 6. a 7. robi się skok o półtora tonu i to on daje orientalne brzmienie.' },
+  { id: 'mel', sec: 1, hue: 'mel', q: MIN, name: 'Melodyczna', sub: '', down: [10, 8, 7, 5, 3, 2, 0],
+    deg: [[0,0],[1,2],[2,3],[3,5],[4,7],[5,9],[6,11]],
+    txt: () => 'Naturalna z podwyższonym 6. i 7. stopniem. Klasycznie tak gra się ją tylko w górę, a w dół wraca naturalna.' },
+  { id: 'dor', sec: 1, hue: 'dor', q: MIN, name: 'Dorycka', sub: '',
+    deg: [[0,0],[1,2],[2,3],[3,5],[4,7],[5,9],[6,10]],
+    txt: () => 'Naturalna z podwyższonym samym 6. stopniem. Od melodycznej różni się tylko 7. stopniem, który zostaje niski.' },
+  { id: 'pmaj', sec: 2, hue: 'maj', q: MAJ, name: 'Pentatonika durowa', sub: 'z jońskiej',
+    deg: [[0,0],[1,2],[2,4],[4,7],[5,9]],
+    txt: () => 'Gama durowa bez 4. i 7. stopnia. Nie ma w niej ani jednego półtonu, więc nic się ze sobą nie gryzie.' },
+  { id: 'pmin', sec: 2, hue: 'nat', q: MIN, name: 'Pentatonika molowa', sub: 'z naturalnej',
+    deg: [[0,0],[2,3],[3,5],[4,7],[6,10]],
+    txt: (c) => `Naturalna bez 2. i 6. stopnia. Te same dźwięki co pentatonika durowa od ${c.rel}.` },
+  { id: 'blu', sec: 2, hue: 'blu', q: MIN, name: 'Bluesowa', sub: 'pentatonika molowa + 1',
+    deg: [[0,0],[2,3],[3,5],[3,6,1],[4,7],[6,10]],
+    txt: () => 'Pentatonika molowa plus jeden dźwięk: blue note wciśnięta między 4. a 5. stopień.' },
+];
+const SC_EN = {
+  secs: ['Major scale', 'Minor scales', 'Pentatonics and blues'],
+  name: ['Ionian','Natural minor','Harmonic minor','Melodic minor','Dorian','Major pentatonic','Minor pentatonic','Blues'],
+  sub: ['major scale','Aeolian','','','','from Ionian','from natural minor','minor pentatonic + 1'],
+  txt: [
+    () => 'The ordinary major scale. The reference point for all the others: degrees in the other scales are counted against it.',
+    (c) => `Major with a lowered 3rd, 6th and 7th degree. It has the same notes as the major scale starting three semitones higher: ${c.min} minor is ${c.rel} major from a different starting note.`,
+    () => 'Natural minor with a raised 7th degree. This leaves a step of one and a half tones between the 6th and 7th, which gives the oriental sound.',
+    () => 'Natural minor with raised 6th and 7th degrees. Classically it is played this way only going up, and coming down it reverts to natural minor.',
+    () => 'Natural minor with only the 6th degree raised. It differs from melodic minor only in the 7th degree, which stays low.',
+    () => 'The major scale without the 4th and 7th degrees. It contains no semitones at all, so nothing clashes.',
+    (c) => `Natural minor without the 2nd and 6th degrees. The same notes as the major pentatonic starting from ${c.rel}.`,
+    () => 'Minor pentatonic plus one note: the blue note squeezed between the 4th and 5th degrees.']
+};
+const SC_X = {"de": {"name": ["Ionisch", "Natürlich Moll", "Harmonisch Moll", "Melodisch Moll", "Dorisch", "Dur-Pentatonik", "Moll-Pentatonik", "Blues"], "sub": ["Dur-Tonleiter", "Äolisch", "", "", "", "aus Ionisch", "aus natürlich Moll", "Moll-Pentatonik + 1"], "secs": ["Dur-Tonleiter", "Moll-Tonleitern", "Pentatoniken und Blues"]}, "nl": {"name": ["Ionisch", "Natuurlijk mineur", "Harmonisch mineur", "Melodisch mineur", "Dorisch", "Majeur pentatonisch", "Mineur pentatonisch", "Blues"], "sub": ["majeurtoonladder", "Aeolisch", "", "", "", "uit Ionisch", "uit natuurlijk mineur", "mineur pentatonisch + 1"], "secs": ["Majeurtoonladder", "Mineurtoonladders", "Pentatonieken en blues"]}, "no": {"name": ["Jonisk", "Naturlig moll", "Harmonisk moll", "Melodisk moll", "Dorisk", "Durpentatonikk", "Mollpentatonikk", "Blues"], "sub": ["durskala", "Eolisk", "", "", "", "fra jonisk", "fra naturlig moll", "mollpentatonikk + 1"], "secs": ["Durskala", "Mollskalaer", "Pentatonikk og blues"]}, "es": {"name": ["Jónica", "Menor natural", "Menor armónica", "Menor melódica", "Dórica", "Pentatónica mayor", "Pentatónica menor", "Blues"], "sub": ["escala mayor", "Eolia", "", "", "", "de la jónica", "de la menor natural", "pentatónica menor + 1"], "secs": ["Escala mayor", "Escalas menores", "Pentatónicas y blues"]}, "fr": {"name": ["Ionienne", "Mineure naturelle", "Mineure harmonique", "Mineure mélodique", "Dorienne", "Pentatonique majeure", "Pentatonique mineure", "Blues"], "sub": ["gamme majeure", "Éolienne", "", "", "", "de l'ionienne", "de la mineure naturelle", "pentatonique mineure + 1"], "secs": ["Gamme majeure", "Gammes mineures", "Pentatoniques et blues"]}};
+const SC_T = {"de": ["Die gewöhnliche Dur-Tonleiter. Der Bezugspunkt für alle anderen: Die Stufen in den übrigen Tonleitern werden an ihr gemessen.", "Dur mit erniedrigter 3., 6. und 7. Stufe. Sie hat dieselben Töne wie die Dur-Tonleiter, die drei Halbtöne höher beginnt: {min}-Moll ist {rel}-Dur, nur von einem anderen Startton aus.", "Natürlich Moll mit erhöhter 7. Stufe. Dadurch entsteht zwischen der 6. und 7. Stufe ein Schritt von anderthalb Tönen, der den orientalischen Klang erzeugt.", "Natürlich Moll mit erhöhter 6. und 7. Stufe. Klassisch spielt man sie so nur aufwärts, abwärts kehrt sie zu natürlich Moll zurück.", "Natürlich Moll mit nur erhöhter 6. Stufe. Von Melodisch Moll unterscheidet sie sich nur in der 7. Stufe, die tief bleibt.", "Die Dur-Tonleiter ohne 4. und 7. Stufe. Sie enthält keinen einzigen Halbton, deshalb reibt sich nichts.", "Natürlich Moll ohne 2. und 6. Stufe. Dieselben Töne wie die Dur-Pentatonik ab {rel}.", "Moll-Pentatonik plus ein Ton: die Blue Note, die zwischen die 4. und 5. Stufe gequetscht ist."], "nl": ["De gewone majeurtoonladder. Het referentiepunt voor alle andere: de trappen in de overige toonladders worden eraan gemeten.", "Majeur met verlaagde 3e, 6e en 7e trap. Ze heeft dezelfde tonen als de majeurtoonladder die drie halve tonen hoger begint: {min}-mineur is {rel}-majeur vanaf een andere beginnoot.", "Natuurlijk mineur met verhoogde 7e trap. Daardoor ontstaat tussen de 6e en 7e trap een stap van anderhalve toon, die het oriëntaalse geluid geeft.", "Natuurlijk mineur met verhoogde 6e en 7e trap. Klassiek speel je haar zo alleen omhoog; omlaag keert ze terug naar natuurlijk mineur.", "Natuurlijk mineur met alleen een verhoogde 6e trap. Van melodisch mineur verschilt ze alleen in de 7e trap, die laag blijft.", "De majeurtoonladder zonder 4e en 7e trap. Er zit geen enkele halve toon in, dus niets botst.", "Natuurlijk mineur zonder 2e en 6e trap. Dezelfde tonen als de majeur pentatonische toonladder vanaf {rel}.", "Mineur pentatonisch plus één toon: de blue note, ingeklemd tussen de 4e en 5e trap."], "no": ["Den vanlige durskalaen. Referansepunktet for alle de andre: trinnene i de andre skalaene telles mot den.", "Dur med senket 3., 6. og 7. trinn. Den har de samme tonene som durskalaen som starter tre halvtoner høyere: {min}-moll er {rel}-dur fra et annet startpunkt.", "Naturlig moll med hevet 7. trinn. Det gir et steg på halvannen tone mellom 6. og 7. trinn, og det gir den orientalske klangen.", "Naturlig moll med hevet 6. og 7. trinn. Klassisk spilles den slik bare oppover, og nedover går den tilbake til naturlig moll.", "Naturlig moll med bare 6. trinn hevet. Den skiller seg fra melodisk moll bare på 7. trinn, som forblir lavt.", "Durskalaen uten 4. og 7. trinn. Den har ingen halvtoner i det hele tatt, så ingenting skurrer.", "Naturlig moll uten 2. og 6. trinn. De samme tonene som durpentatonikken fra {rel}.", "Mollpentatonikk pluss én tone: blåtonen, klemt inn mellom 4. og 5. trinn."], "es": ["La escala mayor de siempre. El punto de referencia para todas las demás: los grados de las otras escalas se cuentan respecto a ella.", "Mayor con los grados 3, 6 y 7 bajados. Tiene las mismas notas que la escala mayor que empieza tres semitonos más arriba: {min} menor es {rel} mayor desde otra nota de partida.", "Menor natural con el 7.º grado elevado. Así queda un salto de un tono y medio entre el 6.º y el 7.º grado, que da el sonido oriental.", "Menor natural con los grados 6 y 7 elevados. Clásicamente se toca así solo al subir, y al bajar vuelve a la menor natural.", "Menor natural con solo el 6.º grado elevado. Se diferencia de la menor melódica únicamente en el 7.º grado, que se queda bajo.", "La escala mayor sin los grados 4 y 7. No contiene ningún semitono, así que nada choca.", "Menor natural sin los grados 2 y 6. Las mismas notas que la pentatónica mayor desde {rel}.", "Pentatónica menor más una nota: la blue note, encajada entre los grados 4 y 5."], "fr": ["La gamme majeure ordinaire. Le point de référence pour toutes les autres : les degrés des autres gammes sont comptés par rapport à elle.", "Majeure avec les 3e, 6e et 7e degrés abaissés. Elle a les mêmes notes que la gamme majeure commençant trois demi-tons plus haut : {min} mineur est {rel} majeur depuis une autre note de départ.", "Mineure naturelle avec le 7e degré haussé. Cela laisse un intervalle d'un ton et demi entre les 6e et 7e degrés, qui donne la sonorité orientale.", "Mineure naturelle avec les 6e et 7e degrés haussés. Classiquement, on ne la joue ainsi qu'en montant ; en descendant, elle redevient mineure naturelle.", "Mineure naturelle avec seulement le 6e degré haussé. Elle ne diffère de la mineure mélodique que par le 7e degré, qui reste bas.", "La gamme majeure sans les 4e et 7e degrés. Elle ne contient aucun demi-ton, donc rien ne grince.", "Mineure naturelle sans les 2e et 6e degrés. Les mêmes notes que la pentatonique majeure à partir de {rel}.", "Pentatonique mineure plus une note : la blue note, glissée entre les 4e et 5e degrés."]};
+const SECS = ['Gama durowa', 'Gamy molowe', 'Pentatoniki i blues'];
+
+SCALES.forEach(x => x.pl = { name: x.name, sub: x.sub, txt: x.txt });
+const SECS_PL = SECS.slice();
+const loc = () => {
+  SCALES.forEach((x, i) => { if (LANG === 'pl') Object.assign(x, x.pl); else { const X = SC_X[LANG] || SC_EN; x.name = X.name[i]; x.sub = X.sub[i]; x.txt = SC_T[LANG] ? (c) => SC_T[LANG][i].replace('{min}', c.min).replace('{rel}', c.rel) : SC_EN.txt[i]; } });
+  SECS.splice(0, 3, ...(LANG === 'pl' ? SECS_PL : (SC_X[LANG] || SC_EN).secs));
+};
+function spell(sc, pc) {
+  const notes = sc.deg.map(([s, m, blue]) => {
+    let r = one(sc.q, pc, s, m);
+    if (blue) { const alt = one(sc.q, pc, 4, m); if (Math.abs(alt.acc) < Math.abs(r.acc)) r = alt; }
+    return r;
+  });
+  notes.push({ name: nm(sc.q[pc]), acc: 0, semi: pc + 12, deg: '1' });
+  return notes;
+}
+const stepTxt = { 1: '½', 2: '1', 3: '1½' };
+
+// ---- rendering ----
+function keyboard(notes, pc) {
+  const lab = {}; notes.forEach(n => lab[foldSemi(n.semi)] = n.name);
+  const top = pc + 12, W = 40, H = 150;
+  const ws = (i) => 12 * Math.floor(i / 7) + LS[i % 7];
+  const N = 7 * OCT; // OCT oktaw C–B (domyślnie 2)
+  let w = '', b = '';
+  for (let i = 0; i < N; i++) {
+    const s = ws(i), on = s in lab, x = i * W;
+    w += `<rect class="k w${on ? ' on' : ''}" data-s="${s}" x="${x + 1}" y="0" width="${W - 2}" height="${H}" rx="4"/>`;
+    if (on) {
+      w += `<text class="lw"${KLAB(lab[s], 17, 12)} x="${x + W / 2}" y="${H - 14}">${lab[s]}</text>`;
+      if (s % 12 === pc) w += `<circle class="dw" cx="${x + W / 2}" cy="${H - 42}" r="4"/>`;
+    }
+    if (i < N - 1 && [0, 1, 3, 4, 5].includes(i % 7)) {
+      const bs = s + 1, bon = bs in lab, bx = x + W - 12;
+      b += `<rect class="k b${bon ? ' on' : ''}" data-s="${bs}" x="${bx}" y="0" width="24" height="92" rx="3"/>`;
+      if (bon) {
+        b += `<text class="lb"${KLAB(lab[bs], 12, 9)} x="${bx + 12}" y="80">${lab[bs]}</text>`;
+        if (bs % 12 === pc) b += `<circle class="db" cx="${bx + 12}" cy="56" r="3"/>`;
+      }
+    }
+  }
+  const vw = N * W + 12;
+  return `<svg viewBox="0 0 ${vw} ${H + 12}" style="max-width:${N * 48 + 12}px" role="img" aria-label="${t('kbd')} ${notes.map(n => n.name).join(' ')}"><rect class="bed" width="${vw}" height="${H + 12}" rx="9"/><g transform="translate(6,6)">${w}${b}</g></svg>`;
+}
+
+function formula(notes) {
+  let h = '';
+  notes.forEach((n, i) => {
+    if (i) { const d = n.semi - notes[i - 1].semi; h += `<span class="st${d !== 2 ? ' h' : ''}">${stepTxt[d]}</span>`; }
+    h += `<span class="n${n.deg === '1' ? ' r' : ''}"><b>${n.name}</b><i>${n.deg}</i></span>`;
+  });
+  return `<div class="formula">${h}</div>`;
+}
+
+function render(pc) {
+  const c = { min: nm(MIN[pc]), maj: nm(MAJ[pc]), rel: nm(MAJ[(pc + 3) % 12]) };
+  let html = '';
+  SECS.forEach((title, si) => {
+    html += `<section><h2>${title}</h2>`;
+    if (si === 1) {
+      const base = [[0,0],[1,2],[2,3],[3,5],[4,7]].map(([s, m]) => one(MIN, pc, s, m).name).join(' ');
+      const n = (s, m) => one(MIN, pc, s, m).name;
+      html += `<p class="intro">${t('sc.intro2').replace('{base}', base)}</p>
+      <div class="tblwrap"><table class="cmp">
+        <thead><tr><td style="background:none;border:0"></td><th>${t('sc.min7')} <b>♭7 = ${n(6, 10)}</b></th><th>${t('sc.maj7')} <b>7 = ${n(6, 11)}</b></th></tr></thead>
+        <tbody>
+          <tr><th>${t('sc.min6')} <b>♭6 = ${n(5, 8)}</b></th><td style="--hue:var(--c-nat)">${t('t.nat')}</td><td style="--hue:var(--c-har)">${t('t.har')}</td></tr>
+          <tr><th>${t('sc.maj6')} <b>6 = ${n(5, 9)}</b></th><td style="--hue:var(--c-dor)">${t('t.dor')}</td><td style="--hue:var(--c-mel)">${t('t.mel')}</td></tr>
+        </tbody></table></div>`;
+    }
+    SCALES.filter(s => s.sec === si).forEach(sc => {
+      const notes = spell(sc, pc);
+      html += `<article class="scale" style="--hue:var(--c-${sc.hue})">
+        <div class="info">
+          <h3>${sc.name}${sc.sub ? ` <small>${sc.sub}</small>` : ''}</h3>
+          <p>${sc.txt(c)}</p>
+          ${formula(notes)}
+          <button class="play" id="play-${sc.id}" data-play="${sc.id}" type="button"><svg viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0l10 6-10 6z"/></svg>${t('sc.play')}</button>
+        </div>
+        <div class="kb" id="kb-${sc.id}">${keyboard(notes, pc)}</div>
+      </article>`;
+    });
+    html += '</section>';
+  });
+  document.getElementById('sapp').innerHTML = html;
+}
+
+if (typeof document !== 'undefined') {
+  let pc = 0;
+  try { const v = parseInt(localStorage.getItem('root'), 10); if (v >= 0 && v < 12) pc = v; } catch (e) {}
+  const LABELS = ['C', 'C♯ / D♭', 'D', 'E♭', 'E', 'F', 'F♯', 'G', 'G♯ / A♭', 'A', 'B♭', 'B'];
+  const rootsEl = document.getElementById('sroots');
+  const buildRoots = () => rootsEl.innerHTML = LABELS.map((l, i) => `<button type="button" id="sroot-${i}" data-root="${i}" aria-pressed="${i === pc}">${conv(l)}</button>`).join('');
+
+
+  rootsEl.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-root]'); if (!b) return;
+    try { localStorage.setItem('root', +b.dataset.root); } catch (err) {}
+    window.dispatchEvent(new CustomEvent('rootchange', { detail: +b.dataset.root }));
+  });
+  const syncRoots = () => rootsEl.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', +x.dataset.root === pc));
+  const rootsInit = () => buildRoots();
+  document.getElementById('sapp').addEventListener('click', (e) => {
+    const p = e.target.closest('[data-play]');
+    if (p) {
+      const sc = SCALES.find(s => s.id === p.dataset.play), box = document.getElementById('kb-' + sc.id);
+      const seq = spell(sc, pc).map(n => n.semi);
+      Player.play('sc' + sc.id, box, seq.map((x, i) => ({ t: i * 300, semi: x, dur: 0.5, hl: 260 })));
+      return;
+    }
+    const k = e.target.closest('.k');
+    if (k) Player.key(k.closest('.kb'), +k.dataset.s, 0.5);
+  });
+  const panel = document.getElementById('tab-sc');
+  const refresh = () => { loc(); applyStatic(panel); buildRoots(); syncRoots(); render(pc); };
+  window.addEventListener('rootchange', (e) => { Player.stopAll(); pc = e.detail; syncRoots(); render(pc); });
+  window.addEventListener('langchange', () => { Player.stopAll(); refresh(); });
+  window.addEventListener('nsyschange', () => { Player.stopAll(); refresh(); });
+  window.addEventListener('octchange', () => { Player.stopAll(); refresh(); });
+  refresh();
+}
+})();
+
+// ===== CHORDS TAB (script). Self-contained: delete this whole IIFE (plus the #tab-ch panel, tab button and CSS block) to remove the tab. =====
+(function () {
+  const LS = [0, 2, 4, 5, 7, 9, 11];
+  const CH_IDS = ['maj', 'min', 'dim', 'aug', 'sus2', 'sus4', 'maj7', 'dom7', 'min7'];
+
+  // ---- texts (7 languages) ----
+  const CH_T = {
+    en: {
+      'tab.ch': 'Chords', 'ch.h1': 'Chord cheat sheet', 'ch.key': 'Root', 'ch.b.chord': 'Chord', 'ch.b.arp': 'Arpeggio',
+      'ch.intro': 'Pick a root and every chord shifts to it. A chord is three or more notes played together, built by stacking intervals on the root. The numbers between the notes are the gaps in semitones, and under each note is its degree, counted against the major scale. The outline marks the root. Click the keys, or use the buttons to hear the whole chord or the notes one by one.',
+      'ch.foot': 'Symbols: m = minor, dim = diminished, aug = augmented, sus = suspended, maj7 = major seventh, 7 = dominant (minor) seventh.',
+      secs: ['Triads', 'Suspended chords', 'Seventh chords'],
+      names: ['Major', 'Minor', 'Diminished', 'Augmented', 'Suspended 2nd', 'Suspended 4th', 'Major 7th', 'Dominant 7th', 'Minor 7th'],
+      feel: ['Bright, stable, happy. The basic sound of a major key.',
+        'Darker and more serious than major. Only the middle note sits a semitone lower.',
+        'Tense and unstable: two minor thirds stacked. It wants to resolve somewhere.',
+        'Floating and unresolved: two major thirds stacked, which makes the chord symmetrical.',
+        'Open and airy. The 3rd is replaced by the 2nd, so it is neither major nor minor.',
+        'Suspended and expectant. The 3rd is replaced by the 4th, which usually wants to fall back to the 3rd.',
+        'Smooth, dreamy and a little jazzy. A major triad with the major 7th added.',
+        'Bluesy and restless. A major triad with the minor 7th, pulling strongly towards the chord a fifth below.',
+        'Warm and mellow. A minor triad with the minor 7th, very common in soul, jazz and pop.']
+    },
+    pl: {
+      'tab.ch': 'Akordy', 'ch.h1': 'Ściąga z akordów', 'ch.key': 'Pryma', 'ch.b.chord': 'Akord', 'ch.b.arp': 'Arpeggio',
+      'ch.intro': 'Wybierz prymę, a wszystkie akordy przestawią się na nią. Akord to trzy lub więcej dźwięków zagranych razem, zbudowanych z interwałów ułożonych na primie. Cyfry między nutami to odległość w półtonach, a pod nutą jest jej stopień liczony względem gamy durowej. Obwódka oznacza prymę. Możesz klikać w klawisze albo użyć przycisków, żeby usłyszeć cały akord lub dźwięki po kolei.',
+      'ch.foot': 'Symbole: m = molowy, dim = zmniejszony, aug = zwiększony, sus = zawieszony, maj7 = septyma wielka, 7 = septyma mała (akord dominantowy).',
+      secs: ['Trójdźwięki', 'Akordy zawieszone', 'Akordy septymowe'],
+      names: ['Durowy', 'Molowy', 'Zmniejszony', 'Zwiększony', 'Z sekundą zamiast tercji', 'Z kwartą zamiast tercji', 'Durowy z septymą wielką', 'Dominantowy septymowy', 'Molowy z septymą małą'],
+      feel: ['Jasny, stabilny, radosny. Podstawowe brzmienie tonacji durowej.',
+        'Ciemniejszy i poważniejszy niż durowy. Tylko środkowy dźwięk jest o półton niżej.',
+        'Napięty i niestabilny: dwie tercje małe jedna na drugiej. Chce się dokądś rozwiązać.',
+        'Unoszący się i nierozwiązany: dwie tercje wielkie jedna na drugiej, przez co akord jest symetryczny.',
+        'Otwarty i przestrzenny. Tercja zastąpiona sekundą, więc nie jest ani durowy, ani molowy.',
+        'Zawieszony i wyczekujący. Tercja zastąpiona kwartą, która zwykle chce opaść z powrotem na tercję.',
+        'Gładki, rozmarzony i trochę jazzowy. Akord durowy z dodaną septymą wielką.',
+        'Bluesowy i niespokojny. Akord durowy z septymą małą mocno ciągnie do akordu o kwintę niżej.',
+        'Ciepły i łagodny. Akord molowy z septymą małą, bardzo częsty w soulu, jazzie i popie.']
+    },
+    de: {
+      'tab.ch': 'Akkorde', 'ch.h1': 'Akkord-Spickzettel', 'ch.key': 'Grundton', 'ch.b.chord': 'Akkord', 'ch.b.arp': 'Arpeggio',
+      'ch.intro': 'Wähle einen Grundton, und alle Akkorde wechseln dorthin. Ein Akkord besteht aus drei oder mehr gleichzeitig gespielten Tönen, aufgebaut aus Intervallen, die auf den Grundton geschichtet werden. Die Zahlen zwischen den Noten sind die Abstände in Halbtönen, unter jeder Note steht ihre Stufe gegenüber der Dur-Tonleiter. Der Rahmen markiert den Grundton. Du kannst die Tasten anklicken oder die Buttons nutzen, um den ganzen Akkord oder die Töne nacheinander zu hören.',
+      'ch.foot': 'Symbole: m = Moll, dim = vermindert, aug = übermäßig, sus = suspendiert, maj7 = große Septime, 7 = kleine Septime (Dominantseptakkord).',
+      secs: ['Dreiklänge', 'Sus-Akkorde', 'Septakkorde'],
+      names: ['Dur', 'Moll', 'Vermindert', 'Übermäßig', 'Sekunde statt Terz', 'Quarte statt Terz', 'Dur mit großer Septime', 'Dominantseptakkord', 'Moll mit kleiner Septime'],
+      feel: ['Hell, stabil, fröhlich. Der Grundklang einer Dur-Tonart.',
+        'Dunkler und ernster als Dur. Nur der mittlere Ton liegt einen Halbton tiefer.',
+        'Gespannt und instabil: zwei kleine Terzen übereinander. Er will sich irgendwohin auflösen.',
+        'Schwebend und ungelöst: zwei große Terzen übereinander, dadurch ist der Akkord symmetrisch.',
+        'Offen und luftig. Die Terz ist durch die Sekunde ersetzt, daher weder Dur noch Moll.',
+        'Schwebend und erwartungsvoll. Die Terz ist durch die Quarte ersetzt, die meist zurück zur Terz fallen will.',
+        'Weich, verträumt und leicht jazzig. Ein Dur-Dreiklang mit zusätzlicher großer Septime.',
+        'Bluesig und unruhig. Ein Dur-Dreiklang mit kleiner Septime, der stark zum Akkord eine Quinte tiefer zieht.',
+        'Warm und sanft. Ein Moll-Dreiklang mit kleiner Septime, sehr häufig in Soul, Jazz und Pop.']
+    },
+    es: {
+      'tab.ch': 'Acordes', 'ch.h1': 'Guía rápida de acordes', 'ch.key': 'Fundamental', 'ch.b.chord': 'Acorde', 'ch.b.arp': 'Arpegio',
+      'ch.intro': 'Elige una fundamental y todos los acordes se desplazan a ella. Un acorde son tres o más notas tocadas a la vez, construido apilando intervalos sobre la fundamental. Los números entre las notas son la distancia en semitonos, y debajo de cada nota está su grado respecto a la escala mayor. El contorno marca la fundamental. Puedes hacer clic en las teclas o usar los botones para oír el acorde entero o las notas una a una.',
+      'ch.foot': 'Símbolos: m = menor, dim = disminuido, aug = aumentado, sus = suspendido, maj7 = séptima mayor, 7 = séptima menor (acorde dominante).',
+      secs: ['Tríadas', 'Acordes suspendidos', 'Acordes de séptima'],
+      names: ['Mayor', 'Menor', 'Disminuido', 'Aumentado', 'Segunda en lugar de tercera', 'Cuarta en lugar de tercera', 'Mayor con séptima mayor', 'Séptima dominante', 'Menor con séptima menor'],
+      feel: ['Brillante, estable, alegre. El sonido básico de una tonalidad mayor.',
+        'Más oscuro y serio que el mayor. Solo la nota central baja un semitono.',
+        'Tenso e inestable: dos terceras menores apiladas. Quiere resolver hacia algún sitio.',
+        'Flotante y sin resolver: dos terceras mayores apiladas, lo que hace el acorde simétrico.',
+        'Abierto y aireado. La tercera se sustituye por la segunda, así que no es ni mayor ni menor.',
+        'Suspendido y expectante. La tercera se sustituye por la cuarta, que suele querer volver a la tercera.',
+        'Suave, soñador y algo jazzístico. Una tríada mayor con la séptima mayor añadida.',
+        'Bluesero e inquieto. Una tríada mayor con séptima menor que tira con fuerza hacia el acorde una quinta más abajo.',
+        'Cálido y suave. Una tríada menor con séptima menor, muy común en soul, jazz y pop.']
+    },
+    fr: {
+      'tab.ch': 'Accords', 'ch.h1': 'Aide-mémoire des accords', 'ch.key': 'Fondamentale', 'ch.b.chord': 'Accord', 'ch.b.arp': 'Arpège',
+      'ch.intro': "Choisissez une fondamentale et tous les accords s'y déplacent. Un accord, ce sont trois notes ou plus jouées ensemble, construit en empilant des intervalles sur la fondamentale. Les nombres entre les notes indiquent la distance en demi-tons, et sous chaque note se trouve son degré par rapport à la gamme majeure. Le contour marque la fondamentale. Vous pouvez cliquer sur les touches ou utiliser les boutons pour entendre l'accord entier ou les notes une à une.",
+      'ch.foot': 'Symboles : m = mineur, dim = diminué, aug = augmenté, sus = suspendu, maj7 = septième majeure, 7 = septième mineure (accord de dominante).',
+      secs: ['Triades', 'Accords suspendus', 'Accords de septième'],
+      names: ['Majeur', 'Mineur', 'Diminué', 'Augmenté', 'Seconde au lieu de la tierce', 'Quarte au lieu de la tierce', 'Majeur avec septième majeure', 'Septième de dominante', 'Mineur avec septième mineure'],
+      feel: ['Lumineux, stable, joyeux. Le son de base d\'une tonalité majeure.',
+        'Plus sombre et plus sérieux que le majeur. Seule la note du milieu descend d\'un demi-ton.',
+        'Tendu et instable : deux tierces mineures superposées. Il cherche à se résoudre quelque part.',
+        'Flottant et non résolu : deux tierces majeures superposées, ce qui rend l\'accord symétrique.',
+        'Ouvert et aérien. La tierce est remplacée par la seconde : ni majeur ni mineur.',
+        'Suspendu et plein d\'attente. La tierce est remplacée par la quarte, qui veut généralement retomber sur la tierce.',
+        'Doux, rêveur et un peu jazzy. Un accord majeur avec la septième majeure ajoutée.',
+        'Bluesy et agité. Un accord majeur avec la septième mineure, qui tire fortement vers l\'accord une quinte plus bas.',
+        'Chaleureux et doux. Un accord mineur avec la septième mineure, très courant en soul, jazz et pop.']
+    },
+    nl: {
+      'tab.ch': 'Akkoorden', 'ch.h1': 'Spiekbrief akkoorden', 'ch.key': 'Grondtoon', 'ch.b.chord': 'Akkoord', 'ch.b.arp': 'Arpeggio',
+      'ch.intro': 'Kies een grondtoon en alle akkoorden schuiven mee. Een akkoord bestaat uit drie of meer tonen die tegelijk klinken, opgebouwd door intervallen op de grondtoon te stapelen. De getallen tussen de noten zijn de afstand in halve tonen, en onder elke noot staat de trap ten opzichte van de majeurtoonladder. De omranding markeert de grondtoon. Je kunt op de toetsen klikken of de knoppen gebruiken om het hele akkoord of de tonen een voor een te horen.',
+      'ch.foot': 'Symbolen: m = mineur, dim = verminderd, aug = overmatig, sus = gesuspendeerd, maj7 = grote septiem, 7 = kleine septiem (dominantakkoord).',
+      secs: ['Drieklanken', 'Sus-akkoorden', 'Septakkoorden'],
+      names: ['Majeur', 'Mineur', 'Verminderd', 'Overmatig', 'Secunde i.p.v. terts', 'Kwart i.p.v. terts', 'Majeur met grote septiem', 'Dominant septiem', 'Mineur met kleine septiem'],
+      feel: ['Helder, stabiel, vrolijk. Het basisgeluid van een majeurtoonsoort.',
+        'Donkerder en serieuzer dan majeur. Alleen de middelste toon ligt een halve toon lager.',
+        'Gespannen en instabiel: twee kleine tertsen op elkaar. Hij wil ergens naartoe oplossen.',
+        'Zwevend en onopgelost: twee grote tertsen op elkaar, waardoor het akkoord symmetrisch is.',
+        'Open en luchtig. De terts is vervangen door de secunde, dus noch majeur noch mineur.',
+        'Zwevend en afwachtend. De terts is vervangen door de kwart, die meestal terug naar de terts wil zakken.',
+        'Zacht, dromerig en een beetje jazzy. Een majeurdrieklank met een grote septiem erbij.',
+        'Bluesy en onrustig. Een majeurdrieklank met kleine septiem die sterk naar het akkoord een kwint lager trekt.',
+        'Warm en mild. Een mineurdrieklank met kleine septiem, heel gewoon in soul, jazz en pop.']
+    },
+    no: {
+      'tab.ch': 'Akkorder', 'ch.h1': 'Jukselapp for akkorder', 'ch.key': 'Grunntone', 'ch.b.chord': 'Akkord', 'ch.b.arp': 'Arpeggio',
+      'ch.intro': 'Velg en grunntone, så flytter alle akkordene seg dit. En akkord er tre eller flere toner spilt samtidig, bygget ved å stable intervaller på grunntonen. Tallene mellom notene er avstanden i halvtoner, og under hver note står trinnet, talt mot durskalaen. Omrisset markerer grunntonen. Du kan klikke på tangentene eller bruke knappene for å høre hele akkorden eller tonene én og én.',
+      'ch.foot': 'Symboler: m = moll, dim = forminsket, aug = overstigende, sus = suspendert, maj7 = stor septim, 7 = liten septim (dominantakkord).',
+      secs: ['Treklanger', 'Sus-akkorder', 'Septimakkorder'],
+      names: ['Dur', 'Moll', 'Forminsket', 'Overstigende', 'Sekund i stedet for ters', 'Kvart i stedet for ters', 'Dur med stor septim', 'Dominantseptim', 'Moll med liten septim'],
+      feel: ['Lys, stabil, glad. Grunnklangen i en durtoneart.',
+        'Mørkere og alvorligere enn dur. Bare den midterste tonen ligger en halvtone lavere.',
+        'Spent og ustabil: to små ters oppå hverandre. Den vil løse seg opp et sted.',
+        'Svevende og uløst: to store ters oppå hverandre, så akkorden er symmetrisk.',
+        'Åpen og luftig. Tersen er erstattet av sekunden, så den er verken dur eller moll.',
+        'Svevende og forventningsfull. Tersen er erstattet av kvarten, som som regel vil falle tilbake til tersen.',
+        'Myk, drømmende og litt jazzete. En durtrekklang med stor septim lagt til.',
+        'Bluesete og urolig. En durtrekklang med liten septim som trekker sterkt mot akkorden en kvint lavere.',
+        'Varm og mild. En molltrekklang med liten septim, veldig vanlig i soul, jazz og pop.']
+    }
+  };
+  Object.keys(CH_T).forEach(l => {
+    const X = CH_T[l];
+    X.names.forEach((n, i) => X['ch.n.' + CH_IDS[i]] = n);
+    X.feel.forEach((n, i) => X['ch.f.' + CH_IDS[i]] = n);
+    X.secs.forEach((n, i) => X['ch.sec' + i] = n);
+    delete X.names; delete X.feel; delete X.secs;
+    Object.assign(I18N[l], X);
+  });
+
+  // ---- chord data: [letter steps above the root, semitones above the root] ----
+  const CHORDS = [
+    { id: 'maj',  sec: 0, hue: 'maj', suf: '',     deg: [[0,0],[2,4],[4,7]] },
+    { id: 'min',  sec: 0, hue: 'nat', suf: 'm',    deg: [[0,0],[2,3],[4,7]] },
+    { id: 'dim',  sec: 0, hue: 'dis', suf: 'dim',  deg: [[0,0],[2,3],[4,6]] },
+    { id: 'aug',  sec: 0, hue: 'mel', suf: 'aug',  deg: [[0,0],[2,4],[4,8]] },
+    { id: 'sus2', sec: 1, hue: 'dor', suf: 'sus2', deg: [[0,0],[1,2],[4,7]] },
+    { id: 'sus4', sec: 1, hue: 'blu', suf: 'sus4', deg: [[0,0],[3,5],[4,7]] },
+    { id: 'maj7', sec: 2, hue: 'maj', suf: 'maj7', deg: [[0,0],[2,4],[4,7],[6,11]] },
+    { id: 'dom7', sec: 2, hue: 'har', suf: '7',    deg: [[0,0],[2,4],[4,7],[6,10]] },
+    { id: 'min7', sec: 2, hue: 'nat', suf: 'm7',   deg: [[0,0],[2,3],[4,7],[6,10]] }
+  ];
+  // possible spellings of each root: [letter index, accidental]; the first one wins ties
+  const CAND = [[[0,0]], [[1,-1],[0,1]], [[1,0]], [[2,-1],[1,1]], [[2,0]], [[3,0]], [[3,1],[4,-1]], [[4,0]], [[5,-1],[4,1]], [[5,0]], [[6,-1],[5,1]], [[6,0]]];
+
+  // spell the chord with whichever root spelling needs the fewest accidentals (C♯ major -> D♭ F A♭, C♯ minor -> C♯ E G♯)
+  function spell(ch, pc) {
+    let best = null, bestCost = 1e9;
+    CAND[pc].forEach(r => {
+      const notes = ch.deg.map(([s, m]) => {
+        const l = (r[0] + s) % 7, acc = ((pc + m) % 12 - LS[l] + 18) % 12 - 6, d = m - LS[s];
+        return { name: nn(l, acc), acc, semi: pc + m, deg: (d < 0 ? '♭' : d > 0 ? '♯' : '') + (s + 1) };
+      });
+      const cost = notes.reduce((a, n) => a + Math.abs(n.acc), 0);
+      if (cost < bestCost) { best = notes; bestCost = cost; }
+    });
+    return best;
+  }
+
+  // ---- rendering ----
+  function keyboard(notes, pc) {
+    const lab = {}; notes.forEach(n => lab[foldSemi(n.semi)] = n.name);
+    const W = 40, H = 150, N = 7 * OCT, ws = (i) => 12 * Math.floor(i / 7) + LS[i % 7];
+    let w = '', b = '';
+    for (let i = 0; i < N; i++) {
+      const s = ws(i), on = s in lab, x = i * W;
+      w += `<rect class="k w${on ? ' on' : ''}" data-s="${s}" x="${x + 1}" y="0" width="${W - 2}" height="${H}" rx="4"/>`;
+      if (on) {
+        w += `<text class="lw"${KLAB(lab[s], 17, 12)} x="${x + W / 2}" y="${H - 14}">${lab[s]}</text>`;
+        if (s % 12 === pc) w += `<circle class="dw" cx="${x + W / 2}" cy="${H - 42}" r="4"/>`;
+      }
+      if (i < N - 1 && [0, 1, 3, 4, 5].includes(i % 7)) {
+        const bs = s + 1, bon = bs in lab, bx = x + W - 12;
+        b += `<rect class="k b${bon ? ' on' : ''}" data-s="${bs}" x="${bx}" y="0" width="24" height="92" rx="3"/>`;
+        if (bon) {
+          b += `<text class="lb"${KLAB(lab[bs], 12, 9)} x="${bx + 12}" y="80">${lab[bs]}</text>`;
+          if (bs % 12 === pc) b += `<circle class="db" cx="${bx + 12}" cy="56" r="3"/>`;
+        }
+      }
+    }
+    const vw = N * W + 12;
+    return `<svg viewBox="0 0 ${vw} ${H + 12}" style="max-width:${N * 48 + 12}px" role="img" aria-label="${t('kbd')} ${notes.map(n => n.name).join(' ')}"><rect class="bed" width="${vw}" height="${H + 12}" rx="9"/><g transform="translate(6,6)">${w}${b}</g></svg>`;
+  }
+  function formula(notes) {
+    let h = '';
+    notes.forEach((n, i) => {
+      if (i) h += `<span class="st">${n.semi - notes[i - 1].semi}</span>`;
+      h += `<span class="n${i === 0 ? ' r' : ''}"><b>${n.name}</b><i>${n.deg}</i></span>`;
+    });
+    return `<div class="formula">${h}</div>`;
+  }
+  const TRI = '<svg viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0l10 6-10 6z"/></svg>';
+  function render(pc) {
+    let html = '';
+    [0, 1, 2].forEach(si => {
+      html += `<section><h2>${t('ch.sec' + si)}</h2>`;
+      CHORDS.filter(c => c.sec === si).forEach(ch => {
+        const notes = spell(ch, pc);
+        html += `<article class="scale" style="--hue:var(--c-${ch.hue})">
+          <div class="info">
+            <h3>${t('ch.n.' + ch.id)} <small>${notes[0].name}${ch.suf}</small></h3>
+            <p>${t('ch.f.' + ch.id)}</p>
+            ${formula(notes)}
+            <div class="pbtns">
+              <button class="play" type="button" data-chord="${ch.id}" data-mode="chord">${TRI}${t('ch.b.chord')}</button>
+              <button class="play" type="button" data-chord="${ch.id}" data-mode="arp">${TRI}${t('ch.b.arp')}</button>
+            </div>
+          </div>
+          <div class="kb" id="kb-ch-${ch.id}">${keyboard(notes, pc)}</div>
+        </article>`;
+      });
+      html += '</section>';
+    });
+    document.getElementById('capp').innerHTML = html;
+  }
+
+  // ---- behaviour ----
+  let pc = 0;
+  try { const v = parseInt(localStorage.getItem('root'), 10); if (v >= 0 && v < 12) pc = v; } catch (e) {}
+  const LABELS = ['C', 'C♯ / D♭', 'D', 'D♯ / E♭', 'E', 'F', 'F♯ / G♭', 'G', 'G♯ / A♭', 'A', 'A♯ / B♭', 'B'];
+  const rootsEl = document.getElementById('croots');
+  const buildRoots = () => rootsEl.innerHTML = LABELS.map((l, i) => `<button type="button" id="croot-${i}" data-root="${i}" aria-pressed="${i === pc}">${conv(l)}</button>`).join('');
+  const syncRoots = () => rootsEl.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', +x.dataset.root === pc));
+  rootsEl.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-root]'); if (!b) return;
+    try { localStorage.setItem('root', +b.dataset.root); } catch (err) {}
+    window.dispatchEvent(new CustomEvent('rootchange', { detail: +b.dataset.root }));
+  });
+  document.getElementById('capp').addEventListener('click', (e) => {
+    const p = e.target.closest('[data-chord]');
+    if (p) {
+      const ch = CHORDS.find(c => c.id === p.dataset.chord), notes = spell(ch, pc), box = document.getElementById('kb-ch-' + ch.id);
+      const vol = notes.length > 3 ? 0.14 : 0.17;
+      Player.play('ch' + ch.id, box, p.dataset.mode === 'arp'
+        ? notes.map((n, i) => ({ t: i * 280, semi: n.semi, dur: 0.8, hl: 420 }))
+        : notes.map(n => ({ semi: n.semi, dur: 1.5, vol, hl: 900 })));
+      return;
+    }
+    const k = e.target.closest('.k');
+    if (k) Player.key(k.closest('.kb'), +k.dataset.s);
+  });
+  const panel = document.getElementById('tab-ch');
+  const refresh = () => { applyStatic(panel); buildRoots(); syncRoots(); render(pc); };
+  window.addEventListener('rootchange', (e) => { Player.stopAll(); pc = e.detail; syncRoots(); render(pc); });
+  window.addEventListener('langchange', () => { Player.stopAll(); refresh(); });
+  window.addEventListener('nsyschange', () => { Player.stopAll(); refresh(); });
+  window.addEventListener('octchange', () => { Player.stopAll(); refresh(); });
+  refresh();
+})();
+// ===== /CHORDS TAB (script) =====
+
+// ===== MIDI keyboard input (Web MIDI API) =====
+// Plays whatever the selected instrument is. Notes are held while the key is held (and by the sustain pedal, CC64).
+// MIDI note 60 (middle C) = the first C on the on-screen keyboards; the highlight folds other octaves onto the visible range.
+(function () {
+  const supported = typeof navigator !== 'undefined' && typeof navigator.requestMIDIAccess === 'function';
+  const boxes = [...document.querySelectorAll('.midibox')];
+  let access = null, enabled = false, denied = false, pedal = false;
+  const down = new Map(), ringing = new Map();   // MIDI note -> { voice, undo } / voice
+  const store = (v) => { try { localStorage.setItem('midi', v); } catch (e) {} };
+  const names = () => { const a = []; if (access) access.inputs.forEach(i => { if (i.state !== 'disconnected') a.push(i.name || 'MIDI'); }); return a; };
+
+  const paint = () => {
+    const list = enabled ? names() : [];
+    boxes.forEach(b => {
+      const btn = b.querySelector('.midibtn'), st = b.querySelector('.midistat');
+      btn.hidden = !supported;
+      btn.setAttribute('aria-pressed', enabled);
+      const lbl = btn.querySelector('[data-i]'); lbl.dataset.i = enabled ? 'midi.disc' : 'midi.conn'; lbl.textContent = t(lbl.dataset.i);
+      st.textContent = !supported ? t('midi.unsup') : denied ? t('midi.denied') : !enabled ? '' : list.length ? list.join(', ') : t('midi.none');
+    });
+  };
+
+  function noteOn(n, vel) {
+    Sound.ensure();
+    if (!Sound.running()) return;               // browsers only allow sound after a click/tap/keypress on the page
+    noteOff(n, true);
+    const old = ringing.get(n); if (old) { old.fade(0.05); ringing.delete(n); }
+    const semi = n - 60;
+    const voice = Sound.start(semi, { vol: 0.04 + 0.3 * Math.pow(vel / 127, 1.4), group: 'midi' });
+    down.set(n, { voice, undo: Player.holdKeys(((semi % (12 * OCT)) + 12 * OCT) % (12 * OCT)) });
+  }
+  function noteOff(n, quick) {
+    const d = down.get(n); if (!d) return;
+    down.delete(n); d.undo();
+    if (!d.voice) return;
+    if (quick) d.voice.fade(0.05); else if (pedal) ringing.set(n, d.voice); else d.voice.release();
+  }
+  function setPedal(on) {
+    pedal = on;
+    if (!on) { ringing.forEach(v => v.release()); ringing.clear(); }
+  }
+  function releaseAll() {
+    down.forEach(d => { d.undo(); if (d.voice) d.voice.release(); }); down.clear();
+    ringing.forEach(v => v.release()); ringing.clear();
+  }
+  function onMsg(e) {
+    const d = e.data; if (!d || d.length < 2) return;
+    const cmd = d[0] & 0xf0, a = d[1], b = d.length > 2 ? d[2] : 0;
+    if (cmd === 0x90 && b > 0) noteOn(a, b);
+    else if (cmd === 0x80 || cmd === 0x90) noteOff(a);
+    else if (cmd === 0xb0) { if (a === 64) setPedal(b >= 64); else if (a === 120 || a === 123) releaseAll(); }
+  }
+  const bind = () => { if (access) access.inputs.forEach(i => { i.onmidimessage = enabled ? onMsg : null; }); };
+
+  async function enable(fromClick) {
+    if (!supported) return;
+    if (fromClick) Sound.ensure();              // the click unlocks audio, so later MIDI notes can sound
+    try { access = await navigator.requestMIDIAccess({ sysex: false }); }
+    catch (e) { denied = true; enabled = false; store('0'); paint(); return; }
+    denied = false; enabled = true; store('1');
+    access.onstatechange = () => { if (names().length === 0) releaseAll(); bind(); paint(); };
+    bind(); paint();
+  }
+  function disable() { enabled = false; releaseAll(); bind(); store('0'); paint(); }
+
+  boxes.forEach(b => b.querySelector('.midibtn').addEventListener('click', () => { enabled ? disable() : enable(true); }));
+  window.addEventListener('langchange', paint);
+  paint();
+  let wasOn = false; try { wasOn = localStorage.getItem('midi') === '1'; } catch (e) {}
+  if (supported && wasOn) enable(false);        // permission was already granted last time, so this stays silent
+})();
+
+// ===== tabs, language, light/dark switch =====
+(function () {
+  const panels = [...document.querySelectorAll('[role="tabpanel"]')];
+  const ids = panels.map(p => p.id.replace('tab-', ''));
+  const bar = document.querySelector('.tabbar');
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('themebtn');
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  const THEME_COLOR = { dark: '#14151b', light: '#f3e3d1' };
+
+  const setTab = (id) => {
+    window.dispatchEvent(new Event('stopall'));
+    panels.forEach(p => { p.hidden = p.id !== 'tab-' + id; });
+    bar.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === id));
+    try { localStorage.setItem('tab', id); } catch (e) {}
+    window.scrollTo(0, 0);
+  };
+
+  // light/dark: the button shows the mode you will switch TO (sun while dark, moon while light)
+  const syncTheme = () => {
+    const th = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    if (metaTheme) metaTheme.setAttribute('content', THEME_COLOR[th]);
+    const label = t(th === 'light' ? 'theme.toDark' : 'theme.toLight');
+    themeBtn.setAttribute('aria-label', label); themeBtn.title = label;
+  };
+  themeBtn.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncTheme();
+  });
+  try {
+    matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+      let saved = null; try { saved = localStorage.getItem('theme'); } catch (err) {}
+      if (!saved) { root.setAttribute('data-theme', e.matches ? 'light' : 'dark'); syncTheme(); }
+    });
+  } catch (e) {}
+
+  const setLang = (l, first) => {
+    LANG = l; document.documentElement.lang = l; document.title = t('title');
+    document.getElementById('langsel').value = l;
+    applyStatic(bar); syncTheme();
+    if (!first) { try { localStorage.setItem('lang', l); } catch (e) {} window.dispatchEvent(new Event('langchange')); }
+  };
+  const setNsys = (v) => {
+    NSYS = v; bar.querySelectorAll('[data-nsys]').forEach(b => b.setAttribute('aria-pressed', b.dataset.nsys === v));
+    try { localStorage.setItem('nsys', v); } catch (e) {}
+    window.dispatchEvent(new Event('nsyschange'));
+  };
+  bar.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-tab]'); if (b) return setTab(b.dataset.tab);
+    const n = e.target.closest('[data-nsys]'); if (n) return setNsys(n.dataset.nsys);
+  });
+  const instSels = document.querySelectorAll('.instsel');
+  instSels.forEach(x => { x.value = INST; x.addEventListener('change', (e) => {
+    INST = e.target.value; try { localStorage.setItem('inst', INST); } catch (err) {}
+    instSels.forEach(y => y.value = INST);
+  }); });
+  const octSels = document.querySelectorAll('.octsel');
+  const syncOct = () => { document.body.setAttribute('data-oct', OCT); octSels.forEach(y => y.value = OCT); };
+  octSels.forEach(x => x.addEventListener('change', (e) => {
+    OCT = +e.target.value; try { localStorage.setItem('oct', OCT); } catch (err) {}
+    syncOct(); window.dispatchEvent(new Event('octchange'));
+  }));
+  syncOct();
+  document.getElementById('langsel').addEventListener('change', (e) => { if (e.target.value !== LANG) setLang(e.target.value); });
+  let tab = ids[0]; try { const s = localStorage.getItem('tab'); if (ids.includes(s)) tab = s; } catch (e) {}
+  setLang(LANG, true); bar.querySelectorAll('[data-nsys]').forEach(b => b.setAttribute('aria-pressed', b.dataset.nsys === NSYS)); setTab(tab); window.scrollTo(0, 0);
+})();
+
+</script></body></html>
